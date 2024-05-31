@@ -32,16 +32,17 @@ class _StartingScreenState extends State<StartingScreen> {
                   _currentStep = 1;
                   _selectedOccupation = null; // Reset selected occupation
                 });
-              } else if(_currentStep == 2) {
+              } else if (_currentStep == 2) {
                 // Otherwise, proceed with normal back navigation
                 setState(() {
                   _currentStep = 1;
-                  _selectedOccupation = null;// Ensure _currentStep is within range
+                  _selectedOccupation =
+                      null; // Ensure _currentStep is within range
                 });
-              }
-              else{
+              } else {
                 setState(() {
-                  _currentStep = (_currentStep - 1); // Ensure _currentStep is within range
+                  _currentStep =
+                      (_currentStep - 1); // Ensure _currentStep is within range
                 });
               }
             }
@@ -153,82 +154,96 @@ class _StartingScreenState extends State<StartingScreen> {
     ]);
 
     if (_selectedOccupation == 'Business') {
-      _currentStep = _currentStep < 2 ? 2 : _currentStep; // Ensure current step is at least 2
-      _currentStep = _currentStep > 4 ? 4 : _currentStep; // Ensure current step is at most 4
+      _currentStep = _currentStep < 2
+          ? 2
+          : _currentStep; // Ensure current step is at least 2
+      _currentStep = _currentStep > 4
+          ? 4
+          : _currentStep; // Ensure current step is at most 4
     } else if (_selectedOccupation == 'Farmer') {
-      _currentStep = _currentStep < 4 ? 4 : _currentStep; // Ensure current step is at least 4
-      _currentStep = _currentStep > 4 ? 4 : _currentStep; // Ensure current step is at most 4
+      _currentStep = _currentStep < 4
+          ? 4
+          : _currentStep; // Ensure current step is at least 4
+      _currentStep = _currentStep > 4
+          ? 4
+          : _currentStep; // Ensure current step is at most 4
     }
 
-      if (_selectedOccupation == 'Business') {
-        steps.addAll([
-          Step(
-            title: const Text('3'),
-            content: _buildPersonalDetailForm(),
-            isActive: _currentStep == 2,
-            state: _currentStep == 2 ? StepState.editing : StepState.complete,
-          ),
-          Step(
-              title: const Text('4'),
-              content: _buildBusinessDetailForm(),
-            isActive: _currentStep == 3,
-            state: _currentStep == 3 ? StepState.editing : StepState.complete,
-          ),
-        ]);
-      } else if (_selectedOccupation == 'Farmer') {
-        steps.add(
-          Step(
-            title: const Text('5'),
-            content: Column(
-              children: [
-                Text(
-                  AppLocalizations.of(context).translate('sub_category'),
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+    if (_selectedOccupation == 'Business') {
+      steps.addAll([
+        Step(
+          title: const Text('3'),
+          content: _buildPersonalDetailForm(),
+          isActive: _currentStep == 2,
+          state: _currentStep == 2 ? StepState.editing : StepState.complete,
+        ),
+        Step(
+          title: const Text('4'),
+          content: _buildBusinessDetailForm(),
+          isActive: _currentStep == 3,
+          state: _currentStep == 3 ? StepState.editing : StepState.complete,
+        ),
+        Step(
+          title: const Text('5'),
+          content: _buildSubCategorySelection(),
+          isActive: _currentStep == 4,
+          state: _currentStep == 4 ? StepState.editing : StepState.complete,
+        ),
+      ]);
+    } else if (_selectedOccupation == 'Farmer') {
+      steps.add(
+        Step(
+          title: const Text('5'),
+          content: Column(
+            children: [
+              Text(
+                AppLocalizations.of(context).translate('sub_category'),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              _buildSubCategoryButton('Machine rent'),
+              const SizedBox(height: 20),
+              _buildSubCategoryButton('Labour'),
+              const SizedBox(height: 20),
+              _buildSubCategoryButton('Advisor'),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Handle Add More action
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey,
+                  minimumSize:
+                      const Size(double.infinity, 60), // Increase button size
                 ),
-                const SizedBox(height: 20),
-                _buildSubCategoryButton('Machine rent'),
-                const SizedBox(height: 20),
-                _buildSubCategoryButton('Labour'),
-                const SizedBox(height: 20),
-                _buildSubCategoryButton('Advisor'),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle Add More action
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey,
-                    minimumSize:
-                        const Size(double.infinity, 60), // Increase button size
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context).translate('add_more'),
-                    style: const TextStyle(color: Colors.black, fontSize: 18),
-                  ),
+                child: Text(
+                  AppLocalizations.of(context).translate('add_more'),
+                  style: const TextStyle(color: Colors.black, fontSize: 18),
                 ),
-                const SizedBox(height: 40),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle Continue action
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    minimumSize:
-                        const Size(double.infinity, 60), // Increase button size
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context).translate('continue'),
-                    style: const TextStyle(color: Colors.white, fontSize: 18),
-                  ),
+              ),
+              const SizedBox(height: 40),
+              ElevatedButton(
+                onPressed: () {
+                  // Handle Continue action
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  minimumSize:
+                      const Size(double.infinity, 60), // Increase button size
                 ),
-              ],
-            ),
-            isActive: _currentStep == 4,
-            state: _currentStep == 4 ? StepState.editing : StepState.complete,
+                child: Text(
+                  AppLocalizations.of(context).translate('continue'),
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
+            ],
           ),
-        );
-      }
+          isActive: _currentStep == 4,
+          state: _currentStep == 4 ? StepState.editing : StepState.complete,
+        ),
+      );
+    }
     return steps;
   }
 
@@ -259,9 +274,9 @@ class _StartingScreenState extends State<StartingScreen> {
     return ElevatedButton(
       onPressed: () {
         setState(() {
-            _selectedOccupation = occupation;
-            _currentStep +=1;
-           // Expand the stepper to show 5 steps
+          _selectedOccupation = occupation;
+          _currentStep += 1;
+          // Expand the stepper to show 5 steps
         });
       },
       style: ElevatedButton.styleFrom(
@@ -364,7 +379,6 @@ class _StartingScreenState extends State<StartingScreen> {
                         Icons.person,
                         color: Colors.green,
                       ),
-                      errorStyle: TextStyle(fontSize: 18.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
@@ -385,7 +399,6 @@ class _StartingScreenState extends State<StartingScreen> {
                         Icons.email,
                         color: Colors.lightBlue,
                       ),
-                      errorStyle: TextStyle(fontSize: 18.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
@@ -414,7 +427,6 @@ class _StartingScreenState extends State<StartingScreen> {
                         Icons.password,
                         color: Colors.lightBlue,
                       ),
-                      errorStyle: TextStyle(fontSize: 18.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
@@ -426,7 +438,7 @@ class _StartingScreenState extends State<StartingScreen> {
                 child: TextFormField(
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'Enter mobile number'),
-                    PatternValidator(r'(^[0,9]{10}$)',
+                    PatternValidator(r'({10}$)',
                         errorText: 'enter valid mobile number'),
                   ]).call,
                   decoration: const InputDecoration(
@@ -443,14 +455,16 @@ class _StartingScreenState extends State<StartingScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
+                  //if(_formkey.currentState!.validate())
                   setState(() {
-                    _currentStep +=1;
+                    _currentStep += 1;
+                    StepState.complete;
                   });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   minimumSize:
-                  const Size(double.infinity, 60), // Increase button size
+                      const Size(double.infinity, 60), // Increase button size
                 ),
                 child: Text(
                   AppLocalizations.of(context).translate('continue'),
@@ -463,13 +477,14 @@ class _StartingScreenState extends State<StartingScreen> {
       ),
     );
   }
+
   Widget _buildBusinessDetailForm() {
-    final _formkey = GlobalKey<FormState>();
+    final _bformkey = GlobalKey<FormState>();
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Form(
-          key: _formkey,
+          key: _bformkey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -482,82 +497,70 @@ class _StartingScreenState extends State<StartingScreen> {
                         errorText: 'Minimum 3 character filled name'),
                   ]).call,
                   decoration: const InputDecoration(
-                      hintText: 'Enter  Name',
-                      labelText: 'Enter Name',
+                      hintText: 'Enter Business Name',
+                      labelText: 'Enter Business Name',
                       prefixIcon: Icon(
                         Icons.person,
                         color: Colors.green,
                       ),
-                      errorStyle: TextStyle(fontSize: 18.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
-                          BorderRadius.all(Radius.circular(9.0)))),
+                              BorderRadius.all(Radius.circular(9.0)))),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   validator: MultiValidator([
-                    RequiredValidator(errorText: 'Enter email address'),
-                    EmailValidator(errorText: 'Please correct email filled'),
+                    RequiredValidator(errorText: 'Enter Business Address'),
                   ]).call,
                   decoration: const InputDecoration(
-                      hintText: 'Email',
-                      labelText: 'Email',
+                      hintText: 'Business Address',
+                      labelText: 'Business Address',
                       prefixIcon: Icon(
-                        Icons.email,
+                        Icons.location_city_outlined,
                         color: Colors.lightBlue,
                       ),
-                      errorStyle: TextStyle(fontSize: 18.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
-                          BorderRadius.all(Radius.circular(9.0)))),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Enter Password';
-                    }
-                    // Check if password meets the criteria
-                    bool isValidPassword = _validatePassword(value);
-                    if (!isValidPassword) {
-                      return 'Password must have a minimum of 8 characters and include letters, numbers, and special characters.';
-                    }
-                    return null; // Validation passed
-                  },
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      hintText: 'Password',
-                      labelText: 'Password',
-                      prefixIcon: Icon(
-                        Icons.password,
-                        color: Colors.lightBlue,
-                      ),
-                      errorStyle: TextStyle(fontSize: 18.0),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red),
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(9.0)))),
+                              BorderRadius.all(Radius.circular(9.0)))),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   validator: MultiValidator([
-                    RequiredValidator(errorText: 'Enter mobile number'),
-                    PatternValidator(r'(^[0,9]{10}$)',
-                        errorText: 'enter valid mobile number'),
+                    RequiredValidator(errorText: 'Enter Pin-Code number'),
+                    PatternValidator(r'(^{6}$)',
+                        errorText: 'Enter Valid Pin-Code number'),
                   ]).call,
                   decoration: const InputDecoration(
-                      hintText: 'Mobile',
-                      labelText: 'Mobile',
+                      hintText: 'Pin-Code',
+                      labelText: 'Pin-Code',
                       prefixIcon: Icon(
-                        Icons.phone,
+                        Icons.pin_drop_rounded,
+                        color: Colors.grey,
+                      ),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius: BorderRadius.all(Radius.circular(9)))),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'Enter GST number'),
+                    PatternValidator(r'({6}$)',
+                        errorText: 'Enter Valid GST number'),
+                  ]).call,
+                  decoration: const InputDecoration(
+                      hintText: 'GST-NO',
+                      labelText: 'GST-NO',
+                      prefixIcon: Icon(
+                        Icons.format_list_numbered_rtl_sharp,
                         color: Colors.grey,
                       ),
                       border: OutlineInputBorder(
@@ -567,12 +570,17 @@ class _StartingScreenState extends State<StartingScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  _buildPersonalDetailForm();
+                  //if (_bformkey.currentState!.validate()) {
+                  setState(() {
+                    StepState.complete;
+                    _currentStep += 1;
+                  });
+                  //}
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   minimumSize:
-                  const Size(double.infinity, 60), // Increase button size
+                      const Size(double.infinity, 60), // Increase button size
                 ),
                 child: Text(
                   AppLocalizations.of(context).translate('continue'),
@@ -582,6 +590,27 @@ class _StartingScreenState extends State<StartingScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildSubCategorySelection() {
+    return ElevatedButton(
+      onPressed: () {
+        setState(() {
+          // Expand the stepper to show 5 steps
+        });
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.grey,
+        minimumSize: const Size(double.infinity, 60),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('SubCategory',
+              style: const TextStyle(color: Colors.black, fontSize: 18)),
+        ],
       ),
     );
   }
