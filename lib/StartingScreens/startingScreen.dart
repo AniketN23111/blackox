@@ -492,7 +492,7 @@ class _StartingScreenState extends State<StartingScreen> {
                 padding: const EdgeInsets.all(12),
                 child: TextFormField(
                   validator: MultiValidator([
-                    RequiredValidator(errorText: 'Enter Business Name'),
+                    RequiredValidator(errorText: AppLocalizations.of(context).translate('enter_business_name')),
                     MinLengthValidator(3,
                         errorText: 'Minimum 3 character filled name'),
                   ]).call,
