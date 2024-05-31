@@ -1,7 +1,12 @@
+import 'package:blackox/i18n/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 
 class StartingScreen extends StatefulWidget {
-  const StartingScreen({Key? key}) : super(key: key);
+  final Function(Locale) onLocaleChange;
+
+  const StartingScreen({Key? key, required this.onLocaleChange})
+      : super(key: key);
 
   @override
   _StartingScreenState createState() => _StartingScreenState();
@@ -12,6 +17,7 @@ class _StartingScreenState extends State<StartingScreen> {
   String? _selectedLanguage;
   String? _selectedOccupation;
   List<String> _selectedSubCategories = [];
+  List<Step> steps = [];
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +26,24 @@ class _StartingScreenState extends State<StartingScreen> {
         leading: IconButton(
           onPressed: () {
             if (_currentStep > 0) {
-              setState(() {
-                _currentStep -= 1;
-              });
+              if (_currentStep == 4 && _selectedOccupation == 'Farmer') {
+                // If on step 4 and selected occupation is farmer, reset to step 1
+                setState(() {
+                  _currentStep = 1;
+                  _selectedOccupation = null; // Reset selected occupation
+                });
+              } else if(_currentStep == 2) {
+                // Otherwise, proceed with normal back navigation
+                setState(() {
+                  _currentStep = 1;
+                  _selectedOccupation = null;// Ensure _currentStep is within range
+                });
+              }
+              else{
+                setState(() {
+                  _currentStep = (_currentStep - 1); // Ensure _currentStep is within range
+                });
+              }
             }
           },
           icon: const Icon(Icons.arrow_back),
@@ -46,7 +67,6 @@ class _StartingScreenState extends State<StartingScreen> {
             padding: const EdgeInsets.all(20.0),
             child: Image.asset(
               'assets/Images/BlackOxLogo.png',
-              // Replace with the path to your image asset
               height: 100.0,
               width: 300.0,
               fit: BoxFit.fitWidth,
@@ -56,7 +76,7 @@ class _StartingScreenState extends State<StartingScreen> {
             child: Stepper(
               currentStep: _currentStep,
               onStepContinue: () {
-                if (_currentStep < 3) {
+                if (_currentStep < 4) {
                   setState(() {
                     _currentStep += 1;
                   });
@@ -87,26 +107,27 @@ class _StartingScreenState extends State<StartingScreen> {
   }
 
   List<Step> _getSteps() {
-    return [
+    steps.clear();
+    steps.addAll([
       Step(
         title: const Text('1'),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const Text(
-              'Choose your Language',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context).translate('choose_language'),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            _buildLanguageButton('Marathi'),
+            _buildLanguageButton('English', 'en'),
             const SizedBox(height: 20),
-            _buildLanguageButton('Hindi'),
+            _buildLanguageButton('Marathi', 'mr'),
             const SizedBox(height: 20),
-            _buildLanguageButton('Gujarati'),
+            _buildLanguageButton('Hindi', 'hi'),
             const SizedBox(height: 20),
-            _buildLanguageButton('Kannada'),
+            _buildLanguageButton('Gujarati', 'gu'),
             const SizedBox(height: 20),
-            _buildLanguageButton('English'),
+            _buildLanguageButton('Kannada', 'kn'),
           ],
         ),
         isActive: _currentStep >= 0,
@@ -116,13 +137,11 @@ class _StartingScreenState extends State<StartingScreen> {
         title: const Text('2'),
         content: Column(
           children: [
-            const Text(
-              'Choose your Occupation',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context).translate('choose_occupation'),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             _buildOccupationButton('Farmer', 'assets/Icon/farmerIcon.png'),
             const SizedBox(height: 20),
             _buildOccupationButton('Business', 'assets/Icon/businessIcon.png'),
@@ -131,65 +150,94 @@ class _StartingScreenState extends State<StartingScreen> {
         isActive: _currentStep >= 1,
         state: _currentStep == 1 ? StepState.editing : StepState.complete,
       ),
-      Step(
-        title: const Text('3'),
-        content: Column(
-          children: [
-            const Text(
-              'Sub category',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    ]);
+
+    if (_selectedOccupation == 'Business') {
+      _currentStep = _currentStep < 2 ? 2 : _currentStep; // Ensure current step is at least 2
+      _currentStep = _currentStep > 4 ? 4 : _currentStep; // Ensure current step is at most 4
+    } else if (_selectedOccupation == 'Farmer') {
+      _currentStep = _currentStep < 4 ? 4 : _currentStep; // Ensure current step is at least 4
+      _currentStep = _currentStep > 4 ? 4 : _currentStep; // Ensure current step is at most 4
+    }
+
+      if (_selectedOccupation == 'Business') {
+        steps.addAll([
+          Step(
+            title: const Text('3'),
+            content: _buildPersonalDetailForm(),
+            isActive: _currentStep == 2,
+            state: _currentStep == 2 ? StepState.editing : StepState.complete,
+          ),
+          Step(
+              title: const Text('4'),
+              content: _buildBusinessDetailForm(),
+            isActive: _currentStep == 3,
+            state: _currentStep == 3 ? StepState.editing : StepState.complete,
+          ),
+        ]);
+      } else if (_selectedOccupation == 'Farmer') {
+        steps.add(
+          Step(
+            title: const Text('5'),
+            content: Column(
+              children: [
+                Text(
+                  AppLocalizations.of(context).translate('sub_category'),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                _buildSubCategoryButton('Machine rent'),
+                const SizedBox(height: 20),
+                _buildSubCategoryButton('Labour'),
+                const SizedBox(height: 20),
+                _buildSubCategoryButton('Advisor'),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle Add More action
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey,
+                    minimumSize:
+                        const Size(double.infinity, 60), // Increase button size
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context).translate('add_more'),
+                    style: const TextStyle(color: Colors.black, fontSize: 18),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle Continue action
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    minimumSize:
+                        const Size(double.infinity, 60), // Increase button size
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context).translate('continue'),
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            _buildSubCategoryButton('Machine rent'),
-            const SizedBox(height: 20),
-            _buildSubCategoryButton('Labour'),
-            const SizedBox(height: 20),
-            _buildSubCategoryButton('Advisor'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Handle Add More action
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey,
-                minimumSize:
-                const Size(double.infinity, 60), // Increase button size
-              ),
-              child: const Text(
-                'Add More',
-                style: TextStyle(color: Colors.black, fontSize: 18),
-              ),
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Handle Continue action
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                minimumSize:
-                const Size(double.infinity, 60), // Increase button size
-              ),
-              child: const Text(
-                'Continue',
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ),
-            ),
-          ],
-        ),
-        isActive: _currentStep >= 2,
-        state: _currentStep == 2 ? StepState.editing : StepState.complete,
-      ),
-    ];
+            isActive: _currentStep == 4,
+            state: _currentStep == 4 ? StepState.editing : StepState.complete,
+          ),
+        );
+      }
+    return steps;
   }
 
-  Widget _buildLanguageButton(String language) {
+  Widget _buildLanguageButton(String language, String code) {
     return ElevatedButton(
       onPressed: () {
         setState(() {
           _selectedLanguage = language;
+          widget.onLocaleChange(Locale(code));
           if (_currentStep < 3) {
             _currentStep += 1;
           }
@@ -197,7 +245,7 @@ class _StartingScreenState extends State<StartingScreen> {
       },
       style: ElevatedButton.styleFrom(
         backgroundColor:
-        _selectedLanguage == language ? Colors.white38 : Colors.grey,
+            _selectedLanguage == language ? Colors.white38 : Colors.grey,
         minimumSize: const Size(double.infinity, 60),
       ),
       child: Text(
@@ -211,16 +259,15 @@ class _StartingScreenState extends State<StartingScreen> {
     return ElevatedButton(
       onPressed: () {
         setState(() {
-          _selectedOccupation = occupation;
-          if (_currentStep < 3) {
-            _currentStep += 1;
-          }
+            _selectedOccupation = occupation;
+            _currentStep +=1;
+           // Expand the stepper to show 5 steps
         });
       },
       style: ElevatedButton.styleFrom(
         backgroundColor:
-        _selectedOccupation == occupation ? Colors.white38 : Colors.grey,
-        minimumSize: const Size(double.infinity, 60), // Increase button size
+            _selectedOccupation == occupation ? Colors.white38 : Colors.grey,
+        minimumSize: const Size(double.infinity, 60),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -248,7 +295,7 @@ class _StartingScreenState extends State<StartingScreen> {
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? Colors.grey : Colors.grey,
-        minimumSize: const Size(double.infinity, 60), // Increase button size
+        minimumSize: const Size(double.infinity, 60),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -285,9 +332,264 @@ class _StartingScreenState extends State<StartingScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          Text(subCategory, style: const TextStyle(color: Colors.black, fontSize: 18)),
+          Text(subCategory,
+              style: const TextStyle(color: Colors.black, fontSize: 18)),
         ],
       ),
     );
+  }
+
+  Widget _buildPersonalDetailForm() {
+    final _formkey = GlobalKey<FormState>();
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Form(
+          key: _formkey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: TextFormField(
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'Enter Name'),
+                    MinLengthValidator(3,
+                        errorText: 'Minimum 3 character filled name'),
+                  ]).call,
+                  decoration: const InputDecoration(
+                      hintText: 'Enter  Name',
+                      labelText: 'Enter Name',
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: Colors.green,
+                      ),
+                      errorStyle: TextStyle(fontSize: 18.0),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(9.0)))),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'Enter email address'),
+                    EmailValidator(errorText: 'Please correct email filled'),
+                  ]).call,
+                  decoration: const InputDecoration(
+                      hintText: 'Email',
+                      labelText: 'Email',
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: Colors.lightBlue,
+                      ),
+                      errorStyle: TextStyle(fontSize: 18.0),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(9.0)))),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Enter Password';
+                    }
+                    // Check if password meets the criteria
+                    bool isValidPassword = _validatePassword(value);
+                    if (!isValidPassword) {
+                      return 'Password must have a minimum of 8 characters and include letters, numbers, and special characters.';
+                    }
+                    return null; // Validation passed
+                  },
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                      hintText: 'Password',
+                      labelText: 'Password',
+                      prefixIcon: Icon(
+                        Icons.password,
+                        color: Colors.lightBlue,
+                      ),
+                      errorStyle: TextStyle(fontSize: 18.0),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(9.0)))),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'Enter mobile number'),
+                    PatternValidator(r'(^[0,9]{10}$)',
+                        errorText: 'enter valid mobile number'),
+                  ]).call,
+                  decoration: const InputDecoration(
+                      hintText: 'Mobile',
+                      labelText: 'Mobile',
+                      prefixIcon: Icon(
+                        Icons.phone,
+                        color: Colors.grey,
+                      ),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius: BorderRadius.all(Radius.circular(9)))),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _currentStep +=1;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  minimumSize:
+                  const Size(double.infinity, 60), // Increase button size
+                ),
+                child: Text(
+                  AppLocalizations.of(context).translate('continue'),
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  Widget _buildBusinessDetailForm() {
+    final _formkey = GlobalKey<FormState>();
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Form(
+          key: _formkey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: TextFormField(
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'Enter Business Name'),
+                    MinLengthValidator(3,
+                        errorText: 'Minimum 3 character filled name'),
+                  ]).call,
+                  decoration: const InputDecoration(
+                      hintText: 'Enter  Name',
+                      labelText: 'Enter Name',
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: Colors.green,
+                      ),
+                      errorStyle: TextStyle(fontSize: 18.0),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(9.0)))),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'Enter email address'),
+                    EmailValidator(errorText: 'Please correct email filled'),
+                  ]).call,
+                  decoration: const InputDecoration(
+                      hintText: 'Email',
+                      labelText: 'Email',
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: Colors.lightBlue,
+                      ),
+                      errorStyle: TextStyle(fontSize: 18.0),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(9.0)))),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Enter Password';
+                    }
+                    // Check if password meets the criteria
+                    bool isValidPassword = _validatePassword(value);
+                    if (!isValidPassword) {
+                      return 'Password must have a minimum of 8 characters and include letters, numbers, and special characters.';
+                    }
+                    return null; // Validation passed
+                  },
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                      hintText: 'Password',
+                      labelText: 'Password',
+                      prefixIcon: Icon(
+                        Icons.password,
+                        color: Colors.lightBlue,
+                      ),
+                      errorStyle: TextStyle(fontSize: 18.0),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(9.0)))),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'Enter mobile number'),
+                    PatternValidator(r'(^[0,9]{10}$)',
+                        errorText: 'enter valid mobile number'),
+                  ]).call,
+                  decoration: const InputDecoration(
+                      hintText: 'Mobile',
+                      labelText: 'Mobile',
+                      prefixIcon: Icon(
+                        Icons.phone,
+                        color: Colors.grey,
+                      ),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius: BorderRadius.all(Radius.circular(9)))),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _buildPersonalDetailForm();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  minimumSize:
+                  const Size(double.infinity, 60), // Increase button size
+                ),
+                child: Text(
+                  AppLocalizations.of(context).translate('continue'),
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  bool _validatePassword(String password) {
+    // Regular expression to check if password contains at least one letter, one number, and one special character
+    final RegExp regex =
+        RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
+    return regex.hasMatch(password);
   }
 }

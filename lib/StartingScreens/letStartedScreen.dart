@@ -27,7 +27,7 @@ class LetStartedScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => const StartingScreen()));
+                Navigator.pushNamed(context, '/startingScreen');
               },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black),
