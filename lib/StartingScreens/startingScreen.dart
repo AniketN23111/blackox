@@ -5,8 +5,7 @@ import 'package:form_field_validator/form_field_validator.dart';
 class StartingScreen extends StatefulWidget {
   final Function(Locale) onLocaleChange;
 
-  const StartingScreen({Key? key, required this.onLocaleChange})
-      : super(key: key);
+  const StartingScreen({super.key, required this.onLocaleChange});
 
   @override
   _StartingScreenState createState() => _StartingScreenState();
@@ -16,7 +15,7 @@ class _StartingScreenState extends State<StartingScreen> {
   int _currentStep = 0;
   String? _selectedLanguage;
   String? _selectedOccupation;
-  List<String> _selectedSubCategories = [];
+  final List<String> _selectedSubCategories = [];
   List<Step> steps = [];
 
   void _resetSteps(String occupation) {
@@ -342,13 +341,12 @@ class _StartingScreenState extends State<StartingScreen> {
   }
 
   Widget _buildPersonalDetailForm() {
-    final String enter_name=AppLocalizations.of(context).translate('enter_name');
-    final _formkey = GlobalKey<FormState>();
+    final formkey = GlobalKey<FormState>();
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Form(
-          key: _formkey,
+          key: formkey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -357,7 +355,7 @@ class _StartingScreenState extends State<StartingScreen> {
                 child: TextFormField(
                   validator: MultiValidator([
 
-                    RequiredValidator(errorText: enter_name),
+                    RequiredValidator(errorText: "Enter Name"),
                     MinLengthValidator(3,
                         errorText: 'Minimum 3 character filled name'),
                   ]).call,
@@ -468,12 +466,12 @@ class _StartingScreenState extends State<StartingScreen> {
   }
 
   Widget _buildBusinessDetailForm() {
-    final _bformkey = GlobalKey<FormState>();
+    final bformkey = GlobalKey<FormState>();
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Form(
-          key: _bformkey,
+          key: bformkey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
