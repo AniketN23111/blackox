@@ -11,5 +11,7 @@
   "enter_business_name": "व्यापार का नाम दर्ज करें",
   "enter_business_address": "व्यापार पता दर्ज करें",
   "enter_pin_code": "पिन कोड दर्ज करें",
-  "enter_gst": "जीएसटी संख्या दर्ज करें"
+  "enter_gst": "जीएसटी संख्या दर्ज करें",
+  "Farmer": "किसान",
+  "Business": "व्यापार"
 }

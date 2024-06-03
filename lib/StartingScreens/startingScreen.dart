@@ -68,7 +68,7 @@ class _StartingScreenState extends State<StartingScreen> {
             padding: const EdgeInsets.all(20.0),
             child: Image.asset(
               'assets/Images/BlackOxLogo.png',
-              height: 100.0,
+              height: 150.0,
               width: 300.0,
               fit: BoxFit.fitWidth,
             ),
@@ -287,7 +287,7 @@ class _StartingScreenState extends State<StartingScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(occupation,
+          Text(AppLocalizations.of(context).translate(occupation),
               style: const TextStyle(color: Colors.black, fontSize: 18)),
           const SizedBox(width: 10),
           Image.asset(imagePath, width: 24, height: 24),
@@ -355,6 +355,7 @@ class _StartingScreenState extends State<StartingScreen> {
   }
 
   Widget _buildPersonalDetailForm() {
+    final String enter_name=AppLocalizations.of(context).translate('enter_name');
     final _formkey = GlobalKey<FormState>();
     return SingleChildScrollView(
       child: Padding(
@@ -368,12 +369,13 @@ class _StartingScreenState extends State<StartingScreen> {
                 padding: const EdgeInsets.all(12),
                 child: TextFormField(
                   validator: MultiValidator([
-                    RequiredValidator(errorText: 'Enter Name'),
+
+                    RequiredValidator(errorText: enter_name),
                     MinLengthValidator(3,
                         errorText: 'Minimum 3 character filled name'),
                   ]).call,
                   decoration: const InputDecoration(
-                      hintText: 'Enter  Name',
+                      hintText: 'Enter Name',
                       labelText: 'Enter Name',
                       prefixIcon: Icon(
                         Icons.person,
@@ -598,18 +600,18 @@ class _StartingScreenState extends State<StartingScreen> {
     return ElevatedButton(
       onPressed: () {
         setState(() {
-          // Expand the stepper to show 5 steps
+          Navigator.pushNamed(context, '/loginScreen');
         });
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.grey,
         minimumSize: const Size(double.infinity, 60),
       ),
-      child: Row(
+      child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text('SubCategory',
-              style: const TextStyle(color: Colors.black, fontSize: 18)),
+              style: TextStyle(color: Colors.black, fontSize: 18)),
         ],
       ),
     );

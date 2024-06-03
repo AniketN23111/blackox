@@ -11,5 +11,7 @@
   "enter_business_name": "ವ್ಯಾಪಾರ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
   "enter_business_address": "ವ್ಯಾಪಾರ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ",
   "enter_pin_code": "ಪಿನ್-ಕೋಡ್ ನಮೂದಿಸಿ",
-  "enter_gst": "GST ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ"
+  "enter_gst": "GST ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "Farmer": "ರೈತ",
+  "Business": "ವ್ಯಾಪಾರ"
 }

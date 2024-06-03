@@ -1,3 +1,4 @@
+import 'package:blackox/Login%20Screen/LoginScreen.dart';
 import 'package:blackox/StartingScreens/letStartedScreen.dart';
 import 'package:blackox/StartingScreens/startingScreen.dart';
 import 'package:blackox/i18n/app_localization.dart';
@@ -53,6 +54,7 @@ class _MyAppState extends State<MyApp> {
         '/': (context) => const SplashScreen(),
         '/letStartedScreen': (context) => const LetStartedScreen(),
         '/startingScreen': (context) => StartingScreen(onLocaleChange: _setLocale),
+        '/loginScreen':(context) => const LoginScreen(),
       },
     );
   }

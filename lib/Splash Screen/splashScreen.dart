@@ -1,6 +1,5 @@
 import 'dart:async';
-
-import 'package:blackox/HomeScreen/homeScreen.dart';
+import 'package:blackox/Login%20Screen/LoginScreen.dart';
 import 'package:blackox/StartingScreens/letStartedScreen.dart';
 import 'package:flutter/material.dart';
 class SplashScreen extends StatefulWidget{
@@ -20,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ()=>Navigator.pushReplacement(context,
             MaterialPageRoute(builder:
                 (context) =>
-            const LetStartedScreen()
+            const LoginScreen()
             )
         )
     );

@@ -11,5 +11,7 @@
 "enter_business_name": "Enter Business Name",
 "enter_business_address": "Enter Business Address",
 "enter_pin_code": "Enter Pin-Code",
-"enter_gst": "Enter GST Number"
+"enter_gst": "Enter GST Number",
+  "Farmer": "Farmer",
+  "Business": "Business"
 }
