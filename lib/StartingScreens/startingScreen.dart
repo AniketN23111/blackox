@@ -19,6 +19,21 @@ class _StartingScreenState extends State<StartingScreen> {
   List<String> _selectedSubCategories = [];
   List<Step> steps = [];
 
+  void _resetSteps(String occupation) {
+    setState(() {
+      _selectedOccupation = occupation;
+      _currentStep = _selectedOccupation == 'Farmer' ? 2 : 2;
+    });
+  }
+
+  void _navigateToStep(int step) {
+    setState(() {
+      if (step >= 0 && step < _getSteps().length) {
+        _currentStep = step;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,25 +41,7 @@ class _StartingScreenState extends State<StartingScreen> {
         leading: IconButton(
           onPressed: () {
             if (_currentStep > 0) {
-              if (_currentStep == 4 && _selectedOccupation == 'Farmer') {
-                // If on step 4 and selected occupation is farmer, reset to step 1
-                setState(() {
-                  _currentStep = 1;
-                  _selectedOccupation = null; // Reset selected occupation
-                });
-              } else if (_currentStep == 2) {
-                // Otherwise, proceed with normal back navigation
-                setState(() {
-                  _currentStep = 1;
-                  _selectedOccupation =
-                      null; // Ensure _currentStep is within range
-                });
-              } else {
-                setState(() {
-                  _currentStep =
-                      (_currentStep - 1); // Ensure _currentStep is within range
-                });
-              }
+              _navigateToStep(_currentStep - 1);
             }
           },
           icon: const Icon(Icons.arrow_back),
@@ -76,23 +73,19 @@ class _StartingScreenState extends State<StartingScreen> {
           Expanded(
             child: Stepper(
               currentStep: _currentStep,
+              steps: _getSteps(),
               onStepContinue: () {
-                if (_currentStep < 4) {
-                  setState(() {
-                    _currentStep += 1;
-                  });
+                if (_currentStep < _getSteps().length - 1) {
+                  _navigateToStep(_currentStep + 1);
                 } else {
                   // Handle final submission or navigation
                 }
               },
               onStepCancel: () {
                 if (_currentStep > 0) {
-                  setState(() {
-                    _currentStep -= 1;
-                  });
+                  _navigateToStep(_currentStep - 1);
                 }
               },
-              steps: _getSteps(),
               type: StepperType.horizontal,
               controlsBuilder: (BuildContext context, ControlsDetails details) {
                 return const Row(
@@ -161,11 +154,11 @@ class _StartingScreenState extends State<StartingScreen> {
           ? 4
           : _currentStep; // Ensure current step is at most 4
     } else if (_selectedOccupation == 'Farmer') {
-      _currentStep = _currentStep < 4
-          ? 4
+      _currentStep = _currentStep < 2
+          ? 2
           : _currentStep; // Ensure current step is at least 4
-      _currentStep = _currentStep > 4
-          ? 4
+      _currentStep = _currentStep > 2
+          ? 2
           : _currentStep; // Ensure current step is at most 4
     }
 
@@ -193,7 +186,7 @@ class _StartingScreenState extends State<StartingScreen> {
     } else if (_selectedOccupation == 'Farmer') {
       steps.add(
         Step(
-          title: const Text('5'),
+          title: const Text('3'),
           content: Column(
             children: [
               Text(
@@ -239,8 +232,8 @@ class _StartingScreenState extends State<StartingScreen> {
               ),
             ],
           ),
-          isActive: _currentStep == 4,
-          state: _currentStep == 4 ? StepState.editing : StepState.complete,
+          isActive: _currentStep == 2,
+          state: _currentStep == 2 ? StepState.editing : StepState.complete,
         ),
       );
     }
@@ -272,13 +265,7 @@ class _StartingScreenState extends State<StartingScreen> {
 
   Widget _buildOccupationButton(String occupation, String imagePath) {
     return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          _selectedOccupation = occupation;
-          _currentStep += 1;
-          // Expand the stepper to show 5 steps
-        });
-      },
+      onPressed: () => _resetSteps(occupation),
       style: ElevatedButton.styleFrom(
         backgroundColor:
             _selectedOccupation == occupation ? Colors.white38 : Colors.grey,
