@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'package:blackox/Constants/Screen_utility.dart';
 import 'package:blackox/Login%20Screen/LoginScreen.dart';
 import 'package:blackox/StartingScreens/letStartedScreen.dart';
 import 'package:flutter/material.dart';
-class SplashScreen extends StatefulWidget{
-  const SplashScreen({super.key});
 
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -13,17 +14,16 @@ class SplashScreen extends StatefulWidget{
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-
     super.initState();
-    Timer(const Duration(seconds: 3),
-            ()=>Navigator.pushReplacement(context,
-            MaterialPageRoute(builder:
-                (context) =>
-            const LoginScreen()
-            )
-        )
+    Timer(
+      const Duration(seconds: 3),
+          () => Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,36 +32,35 @@ class _SplashScreenState extends State<SplashScreen> {
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [Color(0xFFFF800B),Color(0xFFCE1010),]
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [Color(0xD80CFFD2), Color(0xD8317766)],
           ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Center(
-              child: Column(
-                children: [
-                  Image.asset(
-                    "assets/Images/Bull.png",
-                    height: 300.0,
-                    width: 300.0,
-                  ),
-                  const Text("BlackOX",textAlign:TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                ],
+            const Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                "BlackOX",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 36.0,
+                  fontFamily: 'Roboto', // Customize font family if needed
+                ),
               ),
             ),
-
+            Image.asset(
+              "assets/Images/BlackOxLogo.png",
+              height: Screen_utility.screenHeight * 0.3,
+              width: Screen_utility.screenWidth * 0.5,
+            ),
             const CircularProgressIndicator(
-              valueColor:  AlwaysStoppedAnimation<Color>(Colors.orange),
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
             ),
           ],
         ),
