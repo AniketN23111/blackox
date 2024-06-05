@@ -1,3 +1,4 @@
+import 'package:blackox/Constants/Screen_utility.dart';
 import 'package:blackox/HomeScreen/homeScreen.dart';
 import 'package:blackox/StartingScreens/startingScreen.dart';
 import 'package:flutter/material.dart';
@@ -15,15 +16,15 @@ class LetStartedScreen extends StatelessWidget {
             const SizedBox(height: 80),
             Image.asset(
               "assets/Images/BlackOxLogo.png",
-              height: 200.0,
-              width: 300.0,
-              fit: BoxFit.fill,
+              height: Screen_utility.screenHeight*0.3,
+              width: Screen_utility.screenWidth*0.8,
+              fit: BoxFit.fitWidth,
             ),
             const SizedBox(height: 90),
             Image.asset(
               'assets/Images/Bull.png',
-              height: 300,
-              width: 500,
+              height: Screen_utility.screenHeight*0.3,
+              width: Screen_utility.screenWidth*0.8,
             ),
             ElevatedButton(
               onPressed: () {

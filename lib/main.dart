@@ -1,3 +1,4 @@
+import 'package:blackox/Constants/Screen_utility.dart';
 import 'package:blackox/Login%20Screen/LoginScreen.dart';
 import 'package:blackox/Login%20Screen/SignUpScreen.dart';
 import 'package:blackox/StartingScreens/letStartedScreen.dart';
@@ -5,7 +6,6 @@ import 'package:blackox/StartingScreens/startingScreen.dart';
 import 'package:blackox/i18n/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
 import 'Splash Screen/splashScreen.dart';
 
 void main() {
@@ -27,9 +27,14 @@ class _MyAppState extends State<MyApp> {
       _locale = locale;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: (context, child) {
+        Screen_utility.init(context);
+        return child!;
+      },
       locale: _locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -50,13 +55,12 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-
       routes: {
         '/': (context) => const SplashScreen(),
         '/letStartedScreen': (context) => const LetStartedScreen(),
         '/startingScreen': (context) => StartingScreen(onLocaleChange: _setLocale),
-        '/loginScreen':(context) => const LoginScreen(),
-        '/signUpScreen':(context) => const SignUpScreen(),
+        '/loginScreen': (context) => const LoginScreen(),
+        '/signUpScreen': (context) => const SignUpScreen(),
       },
     );
   }
