@@ -1,9 +1,7 @@
 import 'package:blackox/Constants/Screen_utility.dart';
-import 'package:blackox/i18n/app_localization.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:phone_verification/phone_verification.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -57,7 +55,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(9.0)))),
+                            BorderRadius.all(Radius.circular(9.0)))),
                   ),
                 ),
                 Padding(
@@ -85,7 +83,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(9.0)))),
+                            BorderRadius.all(Radius.circular(9.0)))),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: 'Enter mobile number'),
+                      PatternValidator(r'({10}$)',
+                          errorText: 'enter valid mobile number'),
+                    ]).call,
+                    decoration: const InputDecoration(
+                        hintText: 'Mobile',
+                        labelText: 'Mobile',
+                        prefixIcon: Icon(
+                          Icons.phone,
+                          color: Colors.grey,
+                        ),
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(9)))),
                   ),
                 ),
                 Padding(
@@ -106,7 +125,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(9.0)))),
+                            BorderRadius.all(Radius.circular(9.0)))),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -118,28 +137,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: ElevatedButton(
                         onPressed: () async {
                           myauth.setConfig(
-                              appEmail: "ox.black.passionit@gmail.com",
-                              appName: "Email OTP",
-                              userEmail: emailController.text,
-                              otpLength: 6,
-                              otpType: OTPType.digitsOnly
+                            appEmail: "ox.black.passionit@gmail.com",
+                            appName: "BlackOx",
+                            userEmail: emailController.text,
+                            otpLength: 6,
+                            otpType: OTPType.digitsOnly, // Pass the customized email content
                           );
+
                           if (await myauth.sendOTP() == true) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(const SnackBar(
-                          content: Text("OTP has been sent"),
-                          ));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("OTP has been sent"),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
                           } else {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(const SnackBar(
-                          content: Text("Oops, OTP send failed"),
-                          ));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Oops, OTP send failed"),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
-                          minimumSize: const Size(
-                              double.infinity, 60), // Increase button size
+                          minimumSize:  Size(
+                            Screen_utility.screenWidth*0.4,Screen_utility.screenWidth*0.05,), // Increase button size
                         ),
                         child: const Text(
                           'Get Email Otp',
@@ -148,74 +172,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     const SizedBox(width: 20),
-                     SizedBox(
-                       height: Screen_utility.screenHeight*0.04,
-                       width: Screen_utility.screenWidth*0.4,
-                      child: const TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Otp',
-                          labelText: 'Otp',
-                          prefixIcon: Icon(
-                            Icons.email,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    validator: MultiValidator([
-                      RequiredValidator(errorText: 'Enter mobile number'),
-                      PatternValidator(r'({10}$)',
-                          errorText: 'enter valid mobile number'),
-                    ]).call,
-                    decoration: const InputDecoration(
-                        hintText: 'Mobile',
-                        labelText: 'Mobile',
-                        prefixIcon: Icon(
-                          Icons.phone,
-                          color: Colors.grey,
-                        ),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(9)))),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
                     SizedBox(
                       height: Screen_utility.screenHeight*0.04,
-                      width: Screen_utility.screenWidth*0.5,
-                      child: ElevatedButton(
-                        onPressed: ()  {
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          minimumSize: const Size(
-                              double.infinity, 60), // Increase button size
-                        ),
-                        child: const Text(
-                          'Get Number Otp',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                     SizedBox(
-                      height: Screen_utility.screenHeight*0.04,
                       width: Screen_utility.screenWidth*0.4,
-                      child: const TextField(
-                        decoration: InputDecoration(
+                      child:  TextFormField(
+                        controller: emailOtpController,
+                        decoration: const InputDecoration(
                           hintText: 'Otp',
-                          labelText: 'Otp',
                           prefixIcon: Icon(
-                            Icons.phone,
+                            Icons.email,
                             color: Colors.grey,
                           ),
                         ),
@@ -226,13 +191,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 50),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async{
+                      if (await myauth.verifyOTP(otp: emailOtpController.text) == true) {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(const SnackBar(
+                      content: Text("OTP is verified"),
+                        backgroundColor: Colors.green,
+                      ));
                       Navigator.pushNamed(context, '/letStartedScreen');
+                      } else {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(const SnackBar(
+                      content: Text("Invalid OTP"),
+                        backgroundColor: Colors.red,
+                      ));
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       minimumSize:
-                           Size( Screen_utility.screenWidth*0.8,Screen_utility.screenHeight*0.05,), // Increase button size
+                      Size( Screen_utility.screenWidth*0.8,Screen_utility.screenHeight*0.05,), // Increase button size
                     ),
                     child: const Text('Sign Up',
                       style: TextStyle(color: Colors.white, fontSize: 18),
@@ -272,7 +250,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _validatePassword(String password) {
     // Regular expression to check if password contains at least one letter, one number, and one special character
     final RegExp regex =
-        RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
+    RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
     return regex.hasMatch(password);
   }
 }
