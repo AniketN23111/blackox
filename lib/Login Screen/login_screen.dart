@@ -1,4 +1,4 @@
-import 'package:blackox/Constants/Screen_utility.dart';
+import 'package:blackox/Constants/screen_utility.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {

@@ -1,6 +1,4 @@
-import 'package:blackox/Constants/Screen_utility.dart';
-import 'package:blackox/HomeScreen/homeScreen.dart';
-import 'package:blackox/StartingScreens/startingScreen.dart';
+import 'package:blackox/Constants/screen_utility.dart';
 import 'package:flutter/material.dart';
 
 class LetStartedScreen extends StatelessWidget {

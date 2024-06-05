@@ -1,4 +1,5 @@
-import 'package:blackox/Constants/Screen_utility.dart';
+import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/Login%20Screen/account_complete.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -12,6 +13,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formkey = GlobalKey<FormState>();
+  TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController emailOtpController = TextEditingController();
   TextEditingController numberController = TextEditingController();
@@ -43,6 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: TextFormField(
+                    controller: nameController,
                     validator: MultiValidator([
                       RequiredValidator(errorText: 'Enter Name'),
                       MinLengthValidator(3,
@@ -94,8 +97,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: TextFormField(
                     validator: MultiValidator([
                       RequiredValidator(errorText: 'Enter mobile number'),
-                      PatternValidator(r'({10}$)',
-                          errorText: 'enter valid mobile number'),
+                      PatternValidator(r'^[0-9]{10}$',
+                          errorText: 'Enter valid 10-digit mobile number'),
                     ]).call,
                     decoration: const InputDecoration(
                         hintText: 'Mobile',
@@ -168,7 +171,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       width: Screen_utility.screenWidth * 0.4,
                       child: ElevatedButton(
                         onPressed: () async {
-                          if (await myauth.verifyOTP(otp: emailOtpController.text) == true) {
+                          if ( myauth.verifyOTP(otp: emailOtpController.text) == true) {
                             setState(() {
                               isOtpVerified =true;
                             });
@@ -222,7 +225,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (_formkey.currentState!.validate()) {
-                        Navigator.pushNamed(context, '/letStartedScreen');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AccountComplete(username: nameController.text),
+                          ),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(

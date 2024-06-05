@@ -1,12 +1,13 @@
-import 'package:blackox/Constants/Screen_utility.dart';
-import 'package:blackox/Login%20Screen/LoginScreen.dart';
-import 'package:blackox/Login%20Screen/SignUpScreen.dart';
-import 'package:blackox/StartingScreens/letStartedScreen.dart';
-import 'package:blackox/StartingScreens/startingScreen.dart';
+import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/Login%20Screen/account_complete.dart';
+import 'package:blackox/Login%20Screen/login_screen.dart';
+import 'package:blackox/Login%20Screen/signup_screen.dart';
+import 'package:blackox/StartingScreens/let_started_screen.dart';
+import 'package:blackox/StartingScreens/starting_screen.dart';
 import 'package:blackox/i18n/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'Splash Screen/splashScreen.dart';
+import 'Splash Screen/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());

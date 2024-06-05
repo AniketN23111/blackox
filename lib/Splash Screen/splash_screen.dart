@@ -1,14 +1,13 @@
 import 'dart:async';
-import 'package:blackox/Constants/Screen_utility.dart';
-import 'package:blackox/Login%20Screen/LoginScreen.dart';
-import 'package:blackox/StartingScreens/letStartedScreen.dart';
+import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/Login%20Screen/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {

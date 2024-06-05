@@ -1,4 +1,4 @@
-import 'package:blackox/Constants/Screen_utility.dart';
+import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/i18n/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -9,7 +9,7 @@ class StartingScreen extends StatefulWidget {
   const StartingScreen({super.key, required this.onLocaleChange});
 
   @override
-  _StartingScreenState createState() => _StartingScreenState();
+  State<StartingScreen> createState() => _StartingScreenState();
 }
 
 class _StartingScreenState extends State<StartingScreen> {
@@ -479,8 +479,8 @@ class _StartingScreenState extends State<StartingScreen> {
 
   Widget _buildBusinessDetailForm() {
     final bformkey = GlobalKey<FormState>();
-    String? _selectedBusinessType;
-    final List<String> _businessTypes = [
+    String? selectedBusinessType;
+    final List<String> businessTypes = [
       'Type 1',
       'Type 2',
       'Type 3',
@@ -559,8 +559,8 @@ class _StartingScreenState extends State<StartingScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropdownButtonFormField<String>(
-                  value: _selectedBusinessType,
-                  items: _businessTypes.map((String businessType) {
+                  value: selectedBusinessType,
+                  items: businessTypes.map((String businessType) {
                     return DropdownMenuItem<String>(
                       value: businessType,
                       child: Text(businessType),
@@ -568,7 +568,7 @@ class _StartingScreenState extends State<StartingScreen> {
                   }).toList(),
                   onChanged: (String? newValue) {
                     setState(() {
-                      _selectedBusinessType = newValue;
+                      selectedBusinessType = newValue;
                     });
                   },
                   validator: (value) =>
@@ -587,12 +587,12 @@ class _StartingScreenState extends State<StartingScreen> {
                   ),
                 ),
               ),
-              if (_selectedBusinessType != null)
+              if (selectedBusinessType != null)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'Selected Business Type: $_selectedBusinessType',
-                    style: TextStyle(
+                    'Selected Business Type: $selectedBusinessType',
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
