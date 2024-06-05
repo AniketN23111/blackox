@@ -19,7 +19,6 @@ class _StartingScreenState extends State<StartingScreen> {
   final List<String> _selectedSubCategories = [];
   List<Step> steps = [];
 
-
   void _resetSteps(String occupation) {
     setState(() {
       _selectedOccupation = occupation;
@@ -207,8 +206,10 @@ class _StartingScreenState extends State<StartingScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
-                  minimumSize:
-                  Size(Screen_utility.screenWidth*0.8,Screen_utility.screenHeight*0.05), // Increase button size
+                  minimumSize: Size(
+                      Screen_utility.screenWidth * 0.8,
+                      Screen_utility.screenHeight *
+                          0.05), // Increase button size
                 ),
                 child: Text(
                   AppLocalizations.of(context).translate('add_more'),
@@ -222,8 +223,10 @@ class _StartingScreenState extends State<StartingScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
-                  minimumSize:
-                       Size(Screen_utility.screenWidth*0.8,Screen_utility.screenHeight*0.05), // Increase button size
+                  minimumSize: Size(
+                      Screen_utility.screenWidth * 0.8,
+                      Screen_utility.screenHeight *
+                          0.05), // Increase button size
                 ),
                 child: Text(
                   AppLocalizations.of(context).translate('continue'),
@@ -254,7 +257,8 @@ class _StartingScreenState extends State<StartingScreen> {
       style: ElevatedButton.styleFrom(
         backgroundColor:
             _selectedLanguage == language ? Colors.white38 : Colors.grey,
-        minimumSize:  Size( Screen_utility.screenWidth*0.8,Screen_utility.screenHeight*0.05),
+        minimumSize: Size(Screen_utility.screenWidth * 0.8,
+            Screen_utility.screenHeight * 0.05),
       ),
       child: Text(
         language,
@@ -269,7 +273,8 @@ class _StartingScreenState extends State<StartingScreen> {
       style: ElevatedButton.styleFrom(
         backgroundColor:
             _selectedOccupation == occupation ? Colors.white38 : Colors.grey,
-        minimumSize:  Size(Screen_utility.screenWidth*0.8,Screen_utility.screenHeight*0.05),
+        minimumSize: Size(Screen_utility.screenWidth * 0.8,
+            Screen_utility.screenHeight * 0.05),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -277,7 +282,9 @@ class _StartingScreenState extends State<StartingScreen> {
           Text(AppLocalizations.of(context).translate(occupation),
               style: const TextStyle(color: Colors.black, fontSize: 18)),
           const SizedBox(width: 10),
-          Image.asset(imagePath, width: Screen_utility.screenWidth*0.1, height:Screen_utility.screenHeight*0.04),
+          Image.asset(imagePath,
+              width: Screen_utility.screenWidth * 0.1,
+              height: Screen_utility.screenHeight * 0.04),
         ],
       ),
     );
@@ -297,7 +304,8 @@ class _StartingScreenState extends State<StartingScreen> {
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? Colors.grey : Colors.grey,
-        minimumSize:  Size(Screen_utility.screenWidth*0.8,Screen_utility.screenHeight*0.05),
+        minimumSize: Size(Screen_utility.screenWidth * 0.8,
+            Screen_utility.screenHeight * 0.05),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -355,7 +363,6 @@ class _StartingScreenState extends State<StartingScreen> {
                 padding: const EdgeInsets.all(12),
                 child: TextFormField(
                   validator: MultiValidator([
-
                     RequiredValidator(errorText: "Enter Name"),
                     MinLengthValidator(3,
                         errorText: 'Minimum 3 character filled name'),
@@ -444,16 +451,19 @@ class _StartingScreenState extends State<StartingScreen> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  //if(_formkey.currentState!.validate())
-                  setState(() {
-                    _currentStep += 1;
-                    StepState.complete;
-                  });
+                  if (formkey.currentState!.validate()) {
+                    setState(() {
+                      _currentStep += 1;
+                      StepState.complete;
+                    });
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
-                  minimumSize:
-                       Size(Screen_utility.screenWidth*0.8,Screen_utility.screenHeight*0.05), // Increase button size
+                  minimumSize: Size(
+                      Screen_utility.screenWidth * 0.8,
+                      Screen_utility.screenHeight *
+                          0.05), // Increase button size
                 ),
                 child: Text(
                   AppLocalizations.of(context).translate('continue'),
@@ -469,6 +479,13 @@ class _StartingScreenState extends State<StartingScreen> {
 
   Widget _buildBusinessDetailForm() {
     final bformkey = GlobalKey<FormState>();
+    String? _selectedBusinessType;
+    final List<String> _businessTypes = [
+      'Type 1',
+      'Type 2',
+      'Type 3',
+      'Type 4'
+    ];
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -481,7 +498,9 @@ class _StartingScreenState extends State<StartingScreen> {
                 padding: const EdgeInsets.all(12),
                 child: TextFormField(
                   validator: MultiValidator([
-                    RequiredValidator(errorText: AppLocalizations.of(context).translate('enter_business_name')),
+                    RequiredValidator(
+                        errorText: AppLocalizations.of(context)
+                            .translate('enter_business_name')),
                     MinLengthValidator(3,
                         errorText: 'Minimum 3 character filled name'),
                   ]).call,
@@ -539,6 +558,49 @@ class _StartingScreenState extends State<StartingScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
+                child: DropdownButtonFormField<String>(
+                  value: _selectedBusinessType,
+                  items: _businessTypes.map((String businessType) {
+                    return DropdownMenuItem<String>(
+                      value: businessType,
+                      child: Text(businessType),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedBusinessType = newValue;
+                    });
+                  },
+                  validator: (value) =>
+                      value == null ? 'Select a business type' : null,
+                  decoration: const InputDecoration(
+                    hintText: 'Business Type',
+                    labelText: 'Business Type',
+                    prefixIcon: Icon(
+                      Icons.business,
+                      color: Colors.grey,
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
+                      borderRadius: BorderRadius.all(Radius.circular(9)),
+                    ),
+                  ),
+                ),
+              ),
+              if (_selectedBusinessType != null)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Selected Business Type: $_selectedBusinessType',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'Enter GST number'),
@@ -557,20 +619,22 @@ class _StartingScreenState extends State<StartingScreen> {
                           borderRadius: BorderRadius.all(Radius.circular(9)))),
                 ),
               ),
-             const SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  //if (_bformkey.currentState!.validate()) {
-                  setState(() {
-                    StepState.complete;
-                    _currentStep += 1;
-                  });
-                  //}
+                  if (bformkey.currentState!.validate()) {
+                    setState(() {
+                      StepState.complete;
+                      _currentStep += 1;
+                    });
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
-                  minimumSize:
-                       Size(Screen_utility.screenWidth*0.8,Screen_utility.screenHeight*0.05), // Increase button size
+                  minimumSize: Size(
+                      Screen_utility.screenWidth * 0.8,
+                      Screen_utility.screenHeight *
+                          0.05), // Increase button size
                 ),
                 child: Text(
                   AppLocalizations.of(context).translate('continue'),
