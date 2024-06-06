@@ -1,5 +1,5 @@
 import 'package:blackox/Constants/screen_utility.dart';
-import 'package:blackox/Authentication Screen//account_complete.dart';
+import 'package:blackox/Splash Screen/account_complete.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -163,7 +163,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 BorderRadius.all(Radius.circular(9.0)))),
                   ),
                 ),
-                const SizedBox(height: 10),
+                 SizedBox(height: Screen_utility.screenHeight * 0.02),
                 Row(
                   children: [
                     SizedBox(
@@ -202,7 +202,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 20),
+                     SizedBox(width: Screen_utility.screenHeight * 0.03),
                     SizedBox(
                       height: Screen_utility.screenHeight * 0.04,
                       width: Screen_utility.screenWidth * 0.4,
@@ -220,7 +220,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 50),
+                 SizedBox(height: Screen_utility.screenHeight * 0.05),
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
@@ -246,7 +246,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 50),
+                 SizedBox(height: Screen_utility.screenHeight * 0.05),
                 Center(
                   child: TextButton(
                       onPressed: () {},
@@ -255,7 +255,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         style: TextStyle(color: Colors.black),
                       )),
                 ),
-                const SizedBox(height: 20),
+                 SizedBox(height: Screen_utility.screenHeight * 0.03),
                 Row(
                   children: [
                     const SizedBox(width: 100),

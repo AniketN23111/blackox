@@ -111,15 +111,15 @@ class _StartingScreenState extends State<StartingScreen> {
               AppLocalizations.of(context).translate('choose_language'),
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
+             SizedBox(height: Screen_utility.screenHeight * 0.02),
             _buildLanguageButton('English', 'en'),
-            const SizedBox(height: 20),
+             SizedBox(height: Screen_utility.screenHeight * 0.02),
             _buildLanguageButton('Marathi', 'mr'),
-            const SizedBox(height: 20),
+             SizedBox(height: Screen_utility.screenHeight * 0.02),
             _buildLanguageButton('Hindi', 'hi'),
-            const SizedBox(height: 20),
+             SizedBox(height: Screen_utility.screenHeight * 0.02),
             _buildLanguageButton('Gujarati', 'gu'),
-            const SizedBox(height: 20),
+             SizedBox(height: Screen_utility.screenHeight * 0.02),
             _buildLanguageButton('Kannada', 'kn'),
           ],
         ),
@@ -134,9 +134,9 @@ class _StartingScreenState extends State<StartingScreen> {
               AppLocalizations.of(context).translate('choose_occupation'),
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
+             SizedBox(height: Screen_utility.screenHeight * 0.02),
             _buildOccupationButton('Farmer', 'assets/Icon/farmerIcon.png'),
-            const SizedBox(height: 20),
+             SizedBox(height: Screen_utility.screenHeight * 0.02),
             _buildOccupationButton('Business', 'assets/Icon/businessIcon.png'),
           ],
         ),
@@ -193,13 +193,13 @@ class _StartingScreenState extends State<StartingScreen> {
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 20),
+               SizedBox(height: Screen_utility.screenHeight * 0.02),
               _buildSubCategoryButton('Machine rent'),
-              const SizedBox(height: 20),
+               SizedBox(height: Screen_utility.screenHeight * 0.02),
               _buildSubCategoryButton('Labour'),
-              const SizedBox(height: 20),
+               SizedBox(height: Screen_utility.screenHeight * 0.02),
               _buildSubCategoryButton('Advisor'),
-              const SizedBox(height: 40),
+               SizedBox(height: Screen_utility.screenHeight * 0.03),
               ElevatedButton(
                 onPressed: () {
                   // Handle Add More action
@@ -216,7 +216,7 @@ class _StartingScreenState extends State<StartingScreen> {
                   style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
-              const SizedBox(height: 40),
+               SizedBox(height: Screen_utility.screenHeight * 0.03),
               ElevatedButton(
                 onPressed: () {
                   // Handle Continue action
@@ -281,7 +281,7 @@ class _StartingScreenState extends State<StartingScreen> {
         children: [
           Text(AppLocalizations.of(context).translate(occupation),
               style: const TextStyle(color: Colors.black, fontSize: 18)),
-          const SizedBox(width: 10),
+           SizedBox(width: Screen_utility.screenWidth * 0.02),
           Image.asset(imagePath,
               width: Screen_utility.screenWidth * 0.1,
               height: Screen_utility.screenHeight * 0.04),
@@ -341,7 +341,7 @@ class _StartingScreenState extends State<StartingScreen> {
               ],
             ),
           ),
-          const SizedBox(width: 10),
+           SizedBox(width: Screen_utility.screenHeight * 0.01),
           Text(subCategory,
               style: const TextStyle(color: Colors.black, fontSize: 18)),
         ],
@@ -448,7 +448,7 @@ class _StartingScreenState extends State<StartingScreen> {
                           borderRadius: BorderRadius.all(Radius.circular(9)))),
                 ),
               ),
-              const SizedBox(height: 20),
+               SizedBox(height: Screen_utility.screenHeight * 0.02),
               ElevatedButton(
                 onPressed: () {
                   if (formkey.currentState!.validate()) {
@@ -619,7 +619,7 @@ class _StartingScreenState extends State<StartingScreen> {
                           borderRadius: BorderRadius.all(Radius.circular(9)))),
                 ),
               ),
-              const SizedBox(height: 20),
+               SizedBox(height: Screen_utility.screenHeight * 0.02),
               ElevatedButton(
                 onPressed: () {
                   if (bformkey.currentState!.validate()) {

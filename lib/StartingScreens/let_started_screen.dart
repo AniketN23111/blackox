@@ -11,19 +11,20 @@ class LetStartedScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 80),
+             SizedBox(height: Screen_utility.screenHeight * 0.03),
             Image.asset(
               "assets/Images/BlackOxLogo.png",
               height: Screen_utility.screenHeight*0.3,
               width: Screen_utility.screenWidth*0.8,
               fit: BoxFit.fitWidth,
             ),
-            const SizedBox(height: 90),
+             SizedBox(height: Screen_utility.screenHeight * 0.06),
             Image.asset(
               'assets/Images/Bull.png',
               height: Screen_utility.screenHeight*0.3,
               width: Screen_utility.screenWidth*0.8,
             ),
+            SizedBox(height: Screen_utility.screenHeight * 0.06),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/startingScreen');
@@ -37,10 +38,11 @@ class LetStartedScreen extends StatelessWidget {
               ),
               ),
             ),
+            SizedBox(height: Screen_utility.screenHeight * 0.04),
            const Text('"Cultivating knowledge starts here"',
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 20,
+                fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
             ),

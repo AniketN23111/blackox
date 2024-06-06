@@ -18,7 +18,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                const SizedBox(height: 50),
+                 SizedBox(height: Screen_utility.screenHeight * 0.03),
                 SizedBox(
                   height: Screen_utility.screenHeight * 0.25,
                   width: double.infinity,
@@ -47,7 +47,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
-                const SizedBox(height: 20),
+                 SizedBox(height: Screen_utility.screenHeight * 0.03),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/signUpScreen');
@@ -62,12 +62,12 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
-                const SizedBox(height: 20),
+                 SizedBox(height: Screen_utility.screenHeight * 0.03),
                 const Text(
                   'OR',
                   style: TextStyle(color: Colors.black, fontSize: 20),
                 ),
-                const SizedBox(height: 20),
+                 SizedBox(height: Screen_utility.screenHeight * 0.03),
                 SizedBox(
                   height: Screen_utility.screenHeight*0.05,
                   width: Screen_utility.screenWidth*0.8,
@@ -81,7 +81,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                 SizedBox(height: Screen_utility.screenHeight * 0.03),
                 SizedBox(
                   height: Screen_utility.screenHeight*0.05,
                   width: Screen_utility.screenWidth*0.8,
