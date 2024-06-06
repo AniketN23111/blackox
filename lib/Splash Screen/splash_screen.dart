@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:blackox/Authentication%20Screen/authentication_screen.dart';
-import 'package:blackox/Constants/ScreenUtility.dart';
+import 'package:blackox/Constants/screen_utility.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {

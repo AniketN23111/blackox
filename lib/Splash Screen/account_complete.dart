@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:blackox/Constants/ScreenUtility.dart';
+import 'package:blackox/Constants/screen_utility.dart';
 import 'package:flutter/material.dart';
 
 class AccountComplete extends StatefulWidget {
   final String username;
-  const AccountComplete({Key? key, required this.username}) : super(key: key);
+  const AccountComplete({super.key, required this.username});
 
   @override
   State<AccountComplete> createState() => _AccountCompleteState();

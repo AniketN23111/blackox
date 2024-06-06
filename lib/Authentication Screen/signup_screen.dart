@@ -1,4 +1,4 @@
-import 'package:blackox/Constants/ScreenUtility.dart';
+import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/Splash Screen/account_complete.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';

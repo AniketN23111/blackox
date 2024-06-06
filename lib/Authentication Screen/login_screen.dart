@@ -1,4 +1,4 @@
-import 'package:blackox/Constants/ScreenUtility.dart';
+import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/HomeScreen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';

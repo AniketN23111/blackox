@@ -1,6 +1,6 @@
 import 'package:blackox/Authentication%20Screen/login_screen.dart';
 import 'package:blackox/Authentication%20Screen/signup_screen.dart';
-import 'package:blackox/Constants/ScreenUtility.dart';
+import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/Authentication Screen//authentication_screen.dart';
 import 'package:blackox/StartingScreens/let_started_screen.dart';
 import 'package:blackox/StartingScreens/starting_screen.dart';
