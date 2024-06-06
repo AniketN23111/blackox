@@ -1,7 +1,6 @@
+import 'package:blackox/Authentication%20Screen/signup_screen.dart';
 import 'package:blackox/Constants/screen_utility.dart';
-import 'package:blackox/Login%20Screen/account_complete.dart';
-import 'package:blackox/Login%20Screen/login_screen.dart';
-import 'package:blackox/Login%20Screen/signup_screen.dart';
+import 'package:blackox/Authentication Screen//authentication_screen.dart';
 import 'package:blackox/StartingScreens/let_started_screen.dart';
 import 'package:blackox/StartingScreens/starting_screen.dart';
 import 'package:blackox/i18n/app_localization.dart';
@@ -60,7 +59,7 @@ class _MyAppState extends State<MyApp> {
         '/': (context) => const SplashScreen(),
         '/letStartedScreen': (context) => const LetStartedScreen(),
         '/startingScreen': (context) => StartingScreen(onLocaleChange: _setLocale),
-        '/loginScreen': (context) => const LoginScreen(),
+        '/authenticationScreen': (context) => const AuthenticationScreen(),
         '/signUpScreen': (context) => const SignUpScreen(),
       },
     );

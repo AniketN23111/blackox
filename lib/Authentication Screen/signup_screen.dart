@@ -1,5 +1,5 @@
 import 'package:blackox/Constants/screen_utility.dart';
-import 'package:blackox/Login%20Screen/account_complete.dart';
+import 'package:blackox/Authentication Screen//account_complete.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
