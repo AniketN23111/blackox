@@ -500,7 +500,6 @@ class _StartingScreenState extends State<StartingScreen> {
       'Type 3',
       'Type 4'
     ];
-
     TextEditingController businessNameController = TextEditingController();
     TextEditingController businessAddressController = TextEditingController();
     TextEditingController businessPinCodeController = TextEditingController();
