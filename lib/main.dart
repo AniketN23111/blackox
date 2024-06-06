@@ -1,3 +1,4 @@
+import 'package:blackox/Authentication%20Screen/login_screen.dart';
 import 'package:blackox/Authentication%20Screen/signup_screen.dart';
 import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/Authentication Screen//authentication_screen.dart';
@@ -61,6 +62,7 @@ class _MyAppState extends State<MyApp> {
         '/startingScreen': (context) => StartingScreen(onLocaleChange: _setLocale),
         '/authenticationScreen': (context) => const AuthenticationScreen(),
         '/signUpScreen': (context) => const SignUpScreen(),
+        '/LoginScreen': (context) => const LoginScreen(),
       },
     );
   }

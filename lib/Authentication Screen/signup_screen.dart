@@ -2,6 +2,7 @@ import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/Splash Screen/account_complete.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -14,10 +15,10 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formkey = GlobalKey<FormState>();
   TextEditingController nameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController emailOtpController = TextEditingController();
   TextEditingController numberController = TextEditingController();
-  TextEditingController numberOtpController = TextEditingController();
   EmailOTP myauth = EmailOTP();
 
   bool isOtpVerified = false;
@@ -67,6 +68,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: passwordController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Enter Password';
@@ -95,6 +97,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ],
+                    controller: numberController,
                     validator: MultiValidator([
                       RequiredValidator(errorText: 'Enter mobile number'),
                       PatternValidator(r'^[0-9]{10}$',
@@ -135,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   .digitsOnly, // Pass the customized email content
                             );
 
-                            if (await myauth.sendOTP() == true) {
+                            if ( await myauth.sendOTP() == true) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text("OTP has been sent"),
@@ -208,6 +216,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       width: Screen_utility.screenWidth * 0.4,
                       child: TextFormField(
                         controller: emailOtpController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(6),
+                        ],
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter the 6-digit code';
+                          }
+                          if (value.length != 6) {
+                            return 'Code must be exactly 6 digits';
+                          }
+                          return null;
+                        },
                         decoration: const InputDecoration(
                           hintText: 'Otp',
                           prefixIcon: Icon(

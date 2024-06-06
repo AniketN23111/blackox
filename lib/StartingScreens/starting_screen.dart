@@ -1,6 +1,7 @@
 import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/i18n/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 class StartingScreen extends StatefulWidget {
@@ -351,6 +352,10 @@ class _StartingScreenState extends State<StartingScreen> {
 
   Widget _buildPersonalDetailForm() {
     final formkey = GlobalKey<FormState>();
+    TextEditingController perNameController = TextEditingController();
+    TextEditingController perPasswordController = TextEditingController();
+    TextEditingController perEmailController = TextEditingController();
+    TextEditingController perNumberController = TextEditingController();
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -362,6 +367,7 @@ class _StartingScreenState extends State<StartingScreen> {
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: TextFormField(
+                  controller: perNameController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: "Enter Name"),
                     MinLengthValidator(3,
@@ -383,6 +389,7 @@ class _StartingScreenState extends State<StartingScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  controller: perEmailController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'Enter email address'),
                     EmailValidator(errorText: 'Please correct email filled'),
@@ -403,6 +410,7 @@ class _StartingScreenState extends State<StartingScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  controller: perPasswordController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Enter Password';
@@ -431,10 +439,16 @@ class _StartingScreenState extends State<StartingScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  controller: perNumberController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(10),
+                  ],
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'Enter mobile number'),
-                    PatternValidator(r'({10}$)',
-                        errorText: 'enter valid mobile number'),
+                    PatternValidator(r'^[0-9]{10}$',
+                        errorText: 'Enter valid 10-digit mobile number'),
                   ]).call,
                   decoration: const InputDecoration(
                       hintText: 'Mobile',
@@ -486,6 +500,10 @@ class _StartingScreenState extends State<StartingScreen> {
       'Type 3',
       'Type 4'
     ];
+    TextEditingController businessNameController = TextEditingController();
+    TextEditingController businessAddressController = TextEditingController();
+    TextEditingController businessPinCodeController = TextEditingController();
+    TextEditingController businessGSTController = TextEditingController();
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -497,6 +515,7 @@ class _StartingScreenState extends State<StartingScreen> {
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: TextFormField(
+                  controller: businessNameController,
                   validator: MultiValidator([
                     RequiredValidator(
                         errorText: AppLocalizations.of(context)
@@ -520,6 +539,7 @@ class _StartingScreenState extends State<StartingScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  controller: businessAddressController,
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'Enter Business Address'),
                   ]).call,
@@ -539,11 +559,21 @@ class _StartingScreenState extends State<StartingScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'Enter Pin-Code number'),
-                    PatternValidator(r'(^{6}$)',
-                        errorText: 'Enter Valid Pin-Code number'),
-                  ]).call,
+                  controller: businessPinCodeController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(6),
+                  ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Enter the 6-digit Pin-Code';
+                    }
+                    if (value.length != 6) {
+                      return 'Pin-Code must be exactly 6 digits';
+                    }
+                    return null;
+                  },
                   decoration: const InputDecoration(
                       hintText: 'Pin-Code',
                       labelText: 'Pin-Code',
@@ -559,7 +589,6 @@ class _StartingScreenState extends State<StartingScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropdownButtonFormField<String>(
-                  value: selectedBusinessType,
                   items: businessTypes.map((String businessType) {
                     return DropdownMenuItem<String>(
                       value: businessType,
@@ -567,46 +596,42 @@ class _StartingScreenState extends State<StartingScreen> {
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
-                    setState(() {
                       selectedBusinessType = newValue;
-                    });
+                      print(selectedBusinessType);
                   },
-                  validator: (value) =>
-                      value == null ? 'Select a business type' : null,
-                  decoration: const InputDecoration(
-                    hintText: 'Business Type',
-                    labelText: 'Business Type',
-                    prefixIcon: Icon(
+                  value: selectedBusinessType,
+                  decoration: InputDecoration(
+                    hintText: selectedBusinessType ?? 'Business Type',
+                    labelText: selectedBusinessType ?? 'Business Type',
+                    prefixIcon: const Icon(
                       Icons.business,
                       color: Colors.grey,
                     ),
-                    border: OutlineInputBorder(
+                    border: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.red),
                       borderRadius: BorderRadius.all(Radius.circular(9)),
                     ),
                   ),
                 ),
               ),
-              if (selectedBusinessType != null)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Selected Business Type: $selectedBusinessType',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'Enter GST number'),
-                    PatternValidator(r'({6}$)',
-                        errorText: 'Enter Valid GST number'),
-                  ]).call,
+                  controller: businessGSTController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(15),
+                  ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Enter the GST';
+                    }
+                    if (value.length != 15) {
+                      return 'GST Is Invalid';
+                    }
+                    return null;
+                  },
                   decoration: const InputDecoration(
                       hintText: 'GST-NO',
                       labelText: 'GST-NO',
