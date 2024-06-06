@@ -1,4 +1,4 @@
-import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/Constants/ScreenUtility.dart';
 import 'package:flutter/material.dart';
 
 class AuthenticationScreen extends StatefulWidget {
@@ -18,9 +18,9 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                 SizedBox(height: Screen_utility.screenHeight * 0.03),
+                 SizedBox(height: ScreenUtility.screenHeight * 0.03),
                 SizedBox(
-                  height: Screen_utility.screenHeight * 0.25,
+                  height: ScreenUtility.screenHeight * 0.25,
                   width: double.infinity,
                   child: Image.asset(
                     'assets/Images/BlackOxLogo.png',
@@ -28,8 +28,8 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: Screen_utility.screenHeight * 0.2,
-                  width: Screen_utility.screenWidth * 0.5,
+                  height: ScreenUtility.screenHeight * 0.2,
+                  width: ScreenUtility.screenWidth * 0.5,
                   child: Image.asset(
                     'assets/Icon/Account.png',
                     fit: BoxFit.fill,
@@ -42,14 +42,14 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     minimumSize:
-                         Size(Screen_utility.screenWidth, Screen_utility.screenHeight * 0.07), // Increase button size
+                         Size(ScreenUtility.screenWidth, ScreenUtility.screenHeight * 0.07), // Increase button size
                   ),
                   child: const Text(
                     'Login',
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
-                 SizedBox(height: Screen_utility.screenHeight * 0.03),
+                 SizedBox(height: ScreenUtility.screenHeight * 0.03),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/signUpScreen');
@@ -57,22 +57,22 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     minimumSize:
-                         Size(Screen_utility.screenWidth, Screen_utility.screenHeight * 0.07), // Increase button size
+                         Size(ScreenUtility.screenWidth, ScreenUtility.screenHeight * 0.07), // Increase button size
                   ),
                   child: const Text(
                     'Sign UP',
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
-                 SizedBox(height: Screen_utility.screenHeight * 0.03),
+                 SizedBox(height: ScreenUtility.screenHeight * 0.03),
                 const Text(
                   'OR',
                   style: TextStyle(color: Colors.black, fontSize: 20),
                 ),
-                 SizedBox(height: Screen_utility.screenHeight * 0.03),
+                 SizedBox(height: ScreenUtility.screenHeight * 0.03),
                 SizedBox(
-                  height: Screen_utility.screenHeight*0.05,
-                  width: Screen_utility.screenWidth*0.8,
+                  height: ScreenUtility.screenHeight*0.05,
+                  width: ScreenUtility.screenWidth*0.8,
                   child: ElevatedButton.icon(
                     onPressed: () {},
                     icon: Image.asset('assets/Icon/googleIcon.png'),
@@ -83,10 +83,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     ),
                   ),
                 ),
-                 SizedBox(height: Screen_utility.screenHeight * 0.03),
+                 SizedBox(height: ScreenUtility.screenHeight * 0.03),
                 SizedBox(
-                  height: Screen_utility.screenHeight*0.05,
-                  width: Screen_utility.screenWidth*0.8,
+                  height: ScreenUtility.screenHeight*0.05,
+                  width: ScreenUtility.screenWidth*0.8,
                   child: ElevatedButton.icon(
                     onPressed: () {},
                     icon: Image.asset('assets/Icon/WhatsAppIcon.png'),

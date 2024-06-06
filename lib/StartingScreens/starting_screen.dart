@@ -1,4 +1,4 @@
-import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/Constants/ScreenUtility.dart';
 import 'package:blackox/i18n/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -66,7 +66,7 @@ class _StartingScreenState extends State<StartingScreen> {
             padding: const EdgeInsets.all(20.0),
             child: Image.asset(
               'assets/Images/BlackOxLogo.png',
-              height: Screen_utility.screenHeight * 0.2,
+              height: ScreenUtility.screenHeight * 0.2,
               fit: BoxFit.fitWidth,
             ),
           ),
@@ -112,15 +112,15 @@ class _StartingScreenState extends State<StartingScreen> {
               AppLocalizations.of(context).translate('choose_language'),
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-             SizedBox(height: Screen_utility.screenHeight * 0.02),
+             SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildLanguageButton('English', 'en'),
-             SizedBox(height: Screen_utility.screenHeight * 0.02),
+             SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildLanguageButton('Marathi', 'mr'),
-             SizedBox(height: Screen_utility.screenHeight * 0.02),
+             SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildLanguageButton('Hindi', 'hi'),
-             SizedBox(height: Screen_utility.screenHeight * 0.02),
+             SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildLanguageButton('Gujarati', 'gu'),
-             SizedBox(height: Screen_utility.screenHeight * 0.02),
+             SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildLanguageButton('Kannada', 'kn'),
           ],
         ),
@@ -135,9 +135,9 @@ class _StartingScreenState extends State<StartingScreen> {
               AppLocalizations.of(context).translate('choose_occupation'),
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-             SizedBox(height: Screen_utility.screenHeight * 0.02),
+             SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildOccupationButton('Farmer', 'assets/Icon/farmerIcon.png'),
-             SizedBox(height: Screen_utility.screenHeight * 0.02),
+             SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildOccupationButton('Business', 'assets/Icon/businessIcon.png'),
           ],
         ),
@@ -194,13 +194,13 @@ class _StartingScreenState extends State<StartingScreen> {
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-               SizedBox(height: Screen_utility.screenHeight * 0.02),
+               SizedBox(height: ScreenUtility.screenHeight * 0.02),
               _buildSubCategoryButton('Machine rent'),
-               SizedBox(height: Screen_utility.screenHeight * 0.02),
+               SizedBox(height: ScreenUtility.screenHeight * 0.02),
               _buildSubCategoryButton('Labour'),
-               SizedBox(height: Screen_utility.screenHeight * 0.02),
+               SizedBox(height: ScreenUtility.screenHeight * 0.02),
               _buildSubCategoryButton('Advisor'),
-               SizedBox(height: Screen_utility.screenHeight * 0.03),
+               SizedBox(height: ScreenUtility.screenHeight * 0.03),
               ElevatedButton(
                 onPressed: () {
                   // Handle Add More action
@@ -208,8 +208,8 @@ class _StartingScreenState extends State<StartingScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   minimumSize: Size(
-                      Screen_utility.screenWidth * 0.8,
-                      Screen_utility.screenHeight *
+                      ScreenUtility.screenWidth * 0.8,
+                      ScreenUtility.screenHeight *
                           0.05), // Increase button size
                 ),
                 child: Text(
@@ -217,7 +217,7 @@ class _StartingScreenState extends State<StartingScreen> {
                   style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
-               SizedBox(height: Screen_utility.screenHeight * 0.03),
+               SizedBox(height: ScreenUtility.screenHeight * 0.03),
               ElevatedButton(
                 onPressed: () {
                   // Handle Continue action
@@ -225,8 +225,8 @@ class _StartingScreenState extends State<StartingScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   minimumSize: Size(
-                      Screen_utility.screenWidth * 0.8,
-                      Screen_utility.screenHeight *
+                      ScreenUtility.screenWidth * 0.8,
+                      ScreenUtility.screenHeight *
                           0.05), // Increase button size
                 ),
                 child: Text(
@@ -258,8 +258,8 @@ class _StartingScreenState extends State<StartingScreen> {
       style: ElevatedButton.styleFrom(
         backgroundColor:
             _selectedLanguage == language ? Colors.white38 : Colors.grey,
-        minimumSize: Size(Screen_utility.screenWidth * 0.8,
-            Screen_utility.screenHeight * 0.05),
+        minimumSize: Size(ScreenUtility.screenWidth * 0.8,
+            ScreenUtility.screenHeight * 0.05),
       ),
       child: Text(
         language,
@@ -274,18 +274,18 @@ class _StartingScreenState extends State<StartingScreen> {
       style: ElevatedButton.styleFrom(
         backgroundColor:
             _selectedOccupation == occupation ? Colors.white38 : Colors.grey,
-        minimumSize: Size(Screen_utility.screenWidth * 0.8,
-            Screen_utility.screenHeight * 0.05),
+        minimumSize: Size(ScreenUtility.screenWidth * 0.8,
+            ScreenUtility.screenHeight * 0.05),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(AppLocalizations.of(context).translate(occupation),
               style: const TextStyle(color: Colors.black, fontSize: 18)),
-           SizedBox(width: Screen_utility.screenWidth * 0.02),
+           SizedBox(width: ScreenUtility.screenWidth * 0.02),
           Image.asset(imagePath,
-              width: Screen_utility.screenWidth * 0.1,
-              height: Screen_utility.screenHeight * 0.04),
+              width: ScreenUtility.screenWidth * 0.1,
+              height: ScreenUtility.screenHeight * 0.04),
         ],
       ),
     );
@@ -305,8 +305,8 @@ class _StartingScreenState extends State<StartingScreen> {
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? Colors.grey : Colors.grey,
-        minimumSize: Size(Screen_utility.screenWidth * 0.8,
-            Screen_utility.screenHeight * 0.05),
+        minimumSize: Size(ScreenUtility.screenWidth * 0.8,
+            ScreenUtility.screenHeight * 0.05),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -342,7 +342,7 @@ class _StartingScreenState extends State<StartingScreen> {
               ],
             ),
           ),
-           SizedBox(width: Screen_utility.screenHeight * 0.01),
+           SizedBox(width: ScreenUtility.screenHeight * 0.01),
           Text(subCategory,
               style: const TextStyle(color: Colors.black, fontSize: 18)),
         ],
@@ -462,7 +462,7 @@ class _StartingScreenState extends State<StartingScreen> {
                           borderRadius: BorderRadius.all(Radius.circular(9)))),
                 ),
               ),
-               SizedBox(height: Screen_utility.screenHeight * 0.02),
+               SizedBox(height: ScreenUtility.screenHeight * 0.02),
               ElevatedButton(
                 onPressed: () {
                   if (formkey.currentState!.validate()) {
@@ -475,8 +475,8 @@ class _StartingScreenState extends State<StartingScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   minimumSize: Size(
-                      Screen_utility.screenWidth * 0.8,
-                      Screen_utility.screenHeight *
+                      ScreenUtility.screenWidth * 0.8,
+                      ScreenUtility.screenHeight *
                           0.05), // Increase button size
                 ),
                 child: Text(
@@ -597,7 +597,6 @@ class _StartingScreenState extends State<StartingScreen> {
                   }).toList(),
                   onChanged: (String? newValue) {
                       selectedBusinessType = newValue;
-                      print(selectedBusinessType);
                   },
                   value: selectedBusinessType,
                   decoration: InputDecoration(
@@ -644,7 +643,7 @@ class _StartingScreenState extends State<StartingScreen> {
                           borderRadius: BorderRadius.all(Radius.circular(9)))),
                 ),
               ),
-               SizedBox(height: Screen_utility.screenHeight * 0.02),
+               SizedBox(height: ScreenUtility.screenHeight * 0.02),
               ElevatedButton(
                 onPressed: () {
                   if (bformkey.currentState!.validate()) {
@@ -657,8 +656,8 @@ class _StartingScreenState extends State<StartingScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   minimumSize: Size(
-                      Screen_utility.screenWidth * 0.8,
-                      Screen_utility.screenHeight *
+                      ScreenUtility.screenWidth * 0.8,
+                      ScreenUtility.screenHeight *
                           0.05), // Increase button size
                 ),
                 child: Text(

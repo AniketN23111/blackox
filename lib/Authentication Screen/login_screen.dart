@@ -1,7 +1,6 @@
-import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/Constants/ScreenUtility.dart';
 import 'package:blackox/HomeScreen/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -31,8 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.all(20.0),
                   child: Image.asset(
                     'assets/Images/BlackOxLogo.png',
-                    height: Screen_utility.screenHeight * 0.17,
-                    width: Screen_utility.screenWidth * 0.8,
+                    height: ScreenUtility.screenHeight * 0.17,
+                    width: ScreenUtility.screenWidth * 0.8,
                     fit: BoxFit.fitWidth,
                   ),
                 ),
@@ -86,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             BorderRadius.all(Radius.circular(9.0)))),
                   ),
                 ),
-                SizedBox(height: Screen_utility.screenHeight * 0.05),
+                SizedBox(height: ScreenUtility.screenHeight * 0.05),
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
@@ -102,8 +101,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       minimumSize: Size(
-                        Screen_utility.screenWidth * 0.8,
-                        Screen_utility.screenHeight * 0.05,
+                        ScreenUtility.screenWidth * 0.8,
+                        ScreenUtility.screenHeight * 0.05,
                       ), // Increase button size
                     ),
                     child: const Text(
@@ -112,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: Screen_utility.screenHeight * 0.05),
+                SizedBox(height: ScreenUtility.screenHeight * 0.05),
                 Center(
                   child: TextButton(
                       onPressed: () {},
@@ -121,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(color: Colors.black),
                       )),
                 ),
-                SizedBox(height: Screen_utility.screenHeight * 0.03),
+                SizedBox(height: ScreenUtility.screenHeight * 0.03),
                 Row(
                   children: [
                     const SizedBox(width: 100),

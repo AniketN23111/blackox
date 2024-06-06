@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:blackox/Authentication%20Screen/authentication_screen.dart';
-import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/Constants/ScreenUtility.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -55,8 +55,8 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             Image.asset(
               "assets/Images/BlackOxLogo.png",
-              height: Screen_utility.screenHeight * 0.3,
-              width: Screen_utility.screenWidth * 0.5,
+              height: ScreenUtility.screenHeight * 0.3,
+              width: ScreenUtility.screenWidth * 0.5,
             ),
             const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),

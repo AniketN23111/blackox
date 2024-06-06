@@ -1,4 +1,4 @@
-import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/Constants/ScreenUtility.dart';
 import 'package:blackox/Splash Screen/account_complete.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
@@ -38,8 +38,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   padding: const EdgeInsets.all(20.0),
                   child: Image.asset(
                     'assets/Images/BlackOxLogo.png',
-                    height: Screen_utility.screenHeight * 0.17,
-                    width: Screen_utility.screenWidth * 0.8,
+                    height: ScreenUtility.screenHeight * 0.17,
+                    width: ScreenUtility.screenWidth * 0.8,
                     fit: BoxFit.fitWidth,
                   ),
                 ),
@@ -171,12 +171,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 BorderRadius.all(Radius.circular(9.0)))),
                   ),
                 ),
-                 SizedBox(height: Screen_utility.screenHeight * 0.02),
+                 SizedBox(height: ScreenUtility.screenHeight * 0.02),
                 Row(
                   children: [
                     SizedBox(
-                      height: Screen_utility.screenHeight * 0.04,
-                      width: Screen_utility.screenWidth * 0.4,
+                      height: ScreenUtility.screenHeight * 0.04,
+                      width: ScreenUtility.screenWidth * 0.4,
                       child: ElevatedButton(
                         onPressed: () async {
                           if ( myauth.verifyOTP(otp: emailOtpController.text) == true) {
@@ -200,8 +200,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isOtpVerified ? Colors.green : Colors.red,
                           minimumSize: Size(
-                            Screen_utility.screenWidth * 0.4,
-                            Screen_utility.screenWidth * 0.05,
+                            ScreenUtility.screenWidth * 0.4,
+                            ScreenUtility.screenWidth * 0.05,
                           ), // Increase button size
                         ),
                         child: const Text(
@@ -210,10 +210,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-                     SizedBox(width: Screen_utility.screenHeight * 0.03),
+                     SizedBox(width: ScreenUtility.screenHeight * 0.03),
                     SizedBox(
-                      height: Screen_utility.screenHeight * 0.04,
-                      width: Screen_utility.screenWidth * 0.4,
+                      height: ScreenUtility.screenHeight * 0.04,
+                      width: ScreenUtility.screenWidth * 0.4,
                       child: TextFormField(
                         controller: emailOtpController,
                         keyboardType: TextInputType.number,
@@ -242,7 +242,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ],
                 ),
-                 SizedBox(height: Screen_utility.screenHeight * 0.05),
+                 SizedBox(height: ScreenUtility.screenHeight * 0.05),
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
@@ -258,8 +258,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       minimumSize: Size(
-                        Screen_utility.screenWidth * 0.8,
-                        Screen_utility.screenHeight * 0.05,
+                        ScreenUtility.screenWidth * 0.8,
+                        ScreenUtility.screenHeight * 0.05,
                       ), // Increase button size
                     ),
                     child: const Text(
@@ -268,7 +268,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                 ),
-                 SizedBox(height: Screen_utility.screenHeight * 0.05),
+                 SizedBox(height: ScreenUtility.screenHeight * 0.05),
                 Center(
                   child: TextButton(
                       onPressed: () {},
@@ -277,7 +277,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         style: TextStyle(color: Colors.black),
                       )),
                 ),
-                 SizedBox(height: Screen_utility.screenHeight * 0.03),
+                 SizedBox(height: ScreenUtility.screenHeight * 0.03),
                 Row(
                   children: [
                     const SizedBox(width: 100),

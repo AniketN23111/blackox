@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-mixin Screen_utility {
+mixin ScreenUtility {
   static late double screenWidth;
   static late double screenHeight;
 

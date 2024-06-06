@@ -1,8 +1,7 @@
 import 'dart:async';
 
-import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/Constants/ScreenUtility.dart';
 import 'package:flutter/material.dart';
-import 'package:blackox/Constants/screen_utility.dart';
 
 class AccountComplete extends StatefulWidget {
   final String username;
@@ -27,9 +26,9 @@ class _AccountCompleteState extends State<AccountComplete> {
     return Scaffold(
       body: Column(
         children: [
-           SizedBox(height: Screen_utility.screenHeight * 0.1),
+           SizedBox(height: ScreenUtility.screenHeight * 0.1),
           Image.asset("assets/Images/BlackOxLogo.png"),
-           SizedBox(height:  Screen_utility.screenHeight * 0.05,),
+           SizedBox(height:  ScreenUtility.screenHeight * 0.05,),
           const Text("Confirm ! ",style: TextStyle(fontSize: 50,color: Colors.green,fontFamily: 'Roboto',fontWeight: FontWeight.bold),),
           const Text("Congratulations",style: TextStyle(fontSize: 50,color: Colors.black,fontFamily: 'Roboto',fontWeight: FontWeight.bold)),
           Text.rich(
@@ -47,11 +46,11 @@ class _AccountCompleteState extends State<AccountComplete> {
               ],
             ),
           ),
-           SizedBox(height: Screen_utility.screenHeight * 0.05,),
+           SizedBox(height: ScreenUtility.screenHeight * 0.05,),
           Image.asset("assets/Images/account_complete.png",
-            height: Screen_utility.screenHeight * 0.15,
+            height: ScreenUtility.screenHeight * 0.15,
           fit: BoxFit.fitHeight,),
-           SizedBox(height: Screen_utility.screenHeight * 0.1,),
+           SizedBox(height: ScreenUtility.screenHeight * 0.1,),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
