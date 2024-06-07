@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
-class StartingScreen extends StatefulWidget {
+class SelectionScreen extends StatefulWidget {
   final Function(Locale) onLocaleChange;
 
-  const StartingScreen({super.key, required this.onLocaleChange});
+  const SelectionScreen({super.key, required this.onLocaleChange});
 
   @override
-  State<StartingScreen> createState() => _StartingScreenState();
+  State<SelectionScreen> createState() => _SelectionScreenState();
 }
 
-class _StartingScreenState extends State<StartingScreen> {
+class _SelectionScreenState extends State<SelectionScreen> {
   int _currentStep = 0;
   String? _selectedLanguage;
   String? _selectedOccupation;
@@ -220,7 +220,7 @@ class _StartingScreenState extends State<StartingScreen> {
                SizedBox(height: ScreenUtility.screenHeight * 0.03),
               ElevatedButton(
                 onPressed: () {
-                  // Handle Continue action
+                  Navigator.pushNamed(context, '/homeScreen');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
@@ -617,11 +617,11 @@ class _StartingScreenState extends State<StartingScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   controller: businessGSTController,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
                     LengthLimitingTextInputFormatter(15),
                   ],
+                  textCapitalization: TextCapitalization.characters,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Enter the GST';

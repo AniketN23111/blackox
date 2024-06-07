@@ -4,6 +4,7 @@ import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:postgres/postgres.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -22,6 +23,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   EmailOTP myauth = EmailOTP();
 
   bool isOtpVerified = false;
+  bool isOtpEnabled = false;
+  bool isSigningUp = false;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +65,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(9.0)))),
+                            BorderRadius.all(Radius.circular(9.0)))),
                   ),
                 ),
                 Padding(
@@ -91,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(9.0)))),
+                            BorderRadius.all(Radius.circular(9.0)))),
                   ),
                 ),
                 Padding(
@@ -118,13 +121,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(9)))),
+                            BorderRadius.all(Radius.circular(9)))),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
                     controller: emailController,
+                    onChanged: (value) {
+                      setState(() {
+                        isOtpEnabled = false;
+                        isOtpVerified = false;
+                        emailOtpController.clear();
+                      });
+                    },
                     validator: MultiValidator([
                       RequiredValidator(errorText: 'Enter email address'),
                       EmailValidator(errorText: 'Please correct email filled'),
@@ -134,29 +144,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         labelText: 'Email',
                         suffixIcon: TextButton(
                           onPressed: () async {
-                            myauth.setConfig(
-                              appEmail: "ox.black.passionit@gmail.com",
-                              appName: "BlackOx",
-                              userEmail: emailController.text,
-                              otpLength: 6,
-                              otpType: OTPType
-                                  .digitsOnly, // Pass the customized email content
-                            );
-
-                            if ( await myauth.sendOTP() == true) {
+                            // Check if email already exists in the database
+                            bool emailExists = await checkEmailExists(emailController.text);
+                            if (emailExists) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text("OTP has been sent"),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Oops, OTP send failed"),
+                                  content: Text("Email already exists"),
                                   backgroundColor: Colors.red,
                                 ),
                               );
+                            } else {
+                              // Send OTP if email does not exist
+                              myauth.setConfig(
+                                appEmail: "ox.black.passionit@gmail.com",
+                                appName: "BlackOx",
+                                userEmail: emailController.text,
+                                otpLength: 6,
+                                otpType: OTPType.digitsOnly,
+                              );
+
+                              if (await myauth.sendOTP() == true) {
+                                setState(() {
+                                  isOtpEnabled = true;
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("OTP has been sent"),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Oops, OTP send failed"),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                             }
                           },
                           child: const Text("Send Otp"),
@@ -168,35 +192,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         border: const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(9.0)))),
+                            BorderRadius.all(Radius.circular(9.0)))),
                   ),
                 ),
-                 SizedBox(height: ScreenUtility.screenHeight * 0.02),
+                SizedBox(height: ScreenUtility.screenHeight * 0.02),
                 Row(
                   children: [
                     SizedBox(
                       height: ScreenUtility.screenHeight * 0.04,
                       width: ScreenUtility.screenWidth * 0.4,
                       child: ElevatedButton(
-                        onPressed: () async {
-                          if ( myauth.verifyOTP(otp: emailOtpController.text) == true) {
+                        onPressed: isOtpEnabled
+                            ? () async {
+                          if (myauth.verifyOTP(otp: emailOtpController.text) == true) {
                             setState(() {
-                              isOtpVerified =true;
+                              isOtpVerified = true;
                             });
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text("OTP is verified"),
-                              backgroundColor: Colors.green,
-                            ));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("OTP is verified"),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
                           } else {
-                            isOtpVerified=false;
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text("Invalid OTP"),
-                              backgroundColor: Colors.red,
-                            ));
+                            setState(() {
+                              isOtpVerified = false;
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Invalid OTP"),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
                           }
-                        },
+                        }
+                            : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isOtpVerified ? Colors.green : Colors.red,
                           minimumSize: Size(
@@ -210,7 +240,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-                     SizedBox(width: ScreenUtility.screenHeight * 0.03),
+                    SizedBox(width: ScreenUtility.screenHeight * 0.03),
                     SizedBox(
                       height: ScreenUtility.screenHeight * 0.04,
                       width: ScreenUtility.screenWidth * 0.4,
@@ -237,22 +267,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             color: Colors.grey,
                           ),
                         ),
-                        enabled: !isOtpVerified,
+                        enabled: isOtpEnabled,
                       ),
                     ),
                   ],
                 ),
-                 SizedBox(height: ScreenUtility.screenHeight * 0.05),
+                SizedBox(height: ScreenUtility.screenHeight * 0.05),
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
-                      if (_formkey.currentState!.validate()) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AccountComplete(username: nameController.text),
-                          ),
+                      if (_formkey.currentState!.validate() && isOtpVerified) {
+                        setState(() {
+                          isSigningUp = true;
+                        });
+                        bool isRegistered = await registerUser(
+                          nameController.text,
+                          passwordController.text,
+                          emailController.text,
+                          numberController.text,
                         );
+                        setState(() {
+                          isSigningUp = false;
+                        });
+                        if (isRegistered) {
+                          Navigator.push(
+                            // ignore: use_build_context_synchronously
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AccountComplete(
+                                  username: nameController.text),
+                            ),
+                          );
+                        } else {
+                          // ignore: use_build_context_synchronously
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Registration failed. Please try again')),
+                          );
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text("Verify OTP and fill all fields correctly."),
+                          backgroundColor: Colors.red,
+                        ));
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -262,13 +321,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ScreenUtility.screenHeight * 0.05,
                       ), // Increase button size
                     ),
-                    child: const Text(
+                    child: isSigningUp
+                        ? CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                        : const Text(
                       'Sign Up',
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
                   ),
                 ),
-                 SizedBox(height: ScreenUtility.screenHeight * 0.05),
+                SizedBox(height: ScreenUtility.screenHeight * 0.05),
                 Center(
                   child: TextButton(
                       onPressed: () {},
@@ -277,7 +340,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         style: TextStyle(color: Colors.black),
                       )),
                 ),
-                 SizedBox(height: ScreenUtility.screenHeight * 0.03),
+                SizedBox(height: ScreenUtility.screenHeight * 0.03),
                 Row(
                   children: [
                     const SizedBox(width: 100),
@@ -298,10 +361,71 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  Future<bool> registerUser(
+      String name, String password, String email, String number) async {
+    try {
+      final connection = await Connection.open(
+        Endpoint(
+          host: '34.71.87.187',
+          port: 5432,
+          database: 'airegulation_dev',
+          username: 'postgres',
+          password: 'India@5555',
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable),
+      );
+
+      final result = await connection.execute(
+        'INSERT INTO ai.black_ox_user (name, password, email, number) '
+            'VALUES (\$1, \$2, \$3, \$4)',
+        parameters: [name, password, email, number],
+      );
+      print(result);
+      await connection.close();
+      return true;
+    } catch (e) {
+      print('Error registering user: $e');
+      return false;
+    }
+  }
+
+  Future<bool> checkEmailExists(String email) async {
+    try {
+      final connection = await Connection.open(
+        Endpoint(
+          host: '34.71.87.187',
+          port: 5432,
+          database: 'airegulation_dev',
+          username: 'postgres',
+          password: 'India@5555',
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable),
+      );
+
+      final result = await connection.execute(
+        'SELECT COUNT(*) FROM ai.black_ox_user WHERE email = \$1',
+        parameters: [email],
+      );
+
+      await connection.close();
+
+      // Ensure the result is properly cast to an integer
+      if (result.isNotEmpty && result.first.isNotEmpty) {
+        int count = result.first[0] as int;
+        return count > 0;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('Error checking email existence: $e');
+      return false;
+    }
+  }
+
   bool _validatePassword(String password) {
     // Regular expression to check if password contains at least one letter, one number, and one special character
     final RegExp regex =
-        RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
+    RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
     return regex.hasMatch(password);
   }
 }

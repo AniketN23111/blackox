@@ -27,7 +27,7 @@ class LetStartedScreen extends StatelessWidget {
             SizedBox(height: ScreenUtility.screenHeight * 0.06),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/startingScreen');
+                Navigator.pushNamed(context, '/selectionScreen');
               },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black),
