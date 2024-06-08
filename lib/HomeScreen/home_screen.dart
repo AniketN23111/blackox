@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: const <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.orange,
               ),
               child: Text(
                 'Drawer Header',
@@ -98,10 +98,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(const MaterialApp(
-    home: HomeScreen(),
-  ));
 }

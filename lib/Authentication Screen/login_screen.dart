@@ -69,6 +69,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _storeDetailsInPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLoggedIn', true);
+    prefs.setString('Email', emailController.text.toString());
+    prefs.setString('Password',passwordController.text.toString());
   }
 
   @override
