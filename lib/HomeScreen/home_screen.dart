@@ -1,5 +1,9 @@
+import 'package:blackox/HomeScreen/account_page.dart';
+import 'package:blackox/HomeScreen/add_page.dart';
+import 'package:blackox/HomeScreen/categories_page.dart';
+import 'package:blackox/HomeScreen/notification_page.dart';
 import 'package:flutter/material.dart';
-
+import 'package:blackox/HomeScreen/home_page.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -9,6 +13,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+
+  static const List<Widget> _widgetOptions = <Widget>[
+    HomePage(),
+    CategoriesPage(),
+    AddPage(),
+    NotificationPage(),
+    AccountPage(),
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -65,8 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: const Center(
-        child: Text("Home Layout"),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _widgetOptions,
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
