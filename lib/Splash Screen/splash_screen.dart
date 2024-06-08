@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:blackox/Authentication%20Screen/authentication_screen.dart';
 import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/HomeScreen/home_screen.dart'; // Import HomeScreen
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,12 +16,28 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    _navigateToNextScreen();
+  }
+
+  Future<void> _navigateToNextScreen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
     Timer(
       const Duration(seconds: 3),
-          () => Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const AuthenticationScreen()),
-      ),
+          () {
+        if (isLoggedIn) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AuthenticationScreen()),
+          );
+        }
+      },
     );
   }
 

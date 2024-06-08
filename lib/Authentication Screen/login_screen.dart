@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (isValid) {
           // Fetch user data after successful login
           userData = await fetchUserData(emailController.text.toString());
-          _storeDetailsInPrefs();
+          await _storeDetailsInPrefs();
           // Navigate to the page where the user can choose a Device
           Navigator.pushReplacement(
             // ignore: use_build_context_synchronously

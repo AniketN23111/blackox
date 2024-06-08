@@ -147,7 +147,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         labelText: 'Email',
                         suffixIcon: isEmailValid
                             ? (isOtpSending
-                            ? SizedBox(
+                            ? const SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
@@ -164,6 +164,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             // Check if email already exists in the database
                             bool emailExists = await checkEmailExists(emailController.text);
                             if (emailExists) {
+                              // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text("Email already exists"),
@@ -184,6 +185,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 setState(() {
                                   isOtpEnabled = true;
                                 });
+                                // ignore: use_build_context_synchronously
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text("OTP has been sent"),
@@ -191,6 +193,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                 );
                               } else {
+                                // ignore: use_build_context_synchronously
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text("Oops, OTP send failed"),
@@ -343,7 +346,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ), // Increase button size
                     ),
                     child: isSigningUp
-                        ? CircularProgressIndicator(
+                        ? const CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     )
                         : const Text(
@@ -396,16 +399,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
         settings: const ConnectionSettings(sslMode: SslMode.disable),
       );
 
-      final result = await connection.execute(
+       connection.execute(
         'INSERT INTO ai.black_ox_user (name, password, email, number) '
             'VALUES (\$1, \$2, \$3, \$4)',
         parameters: [name, password, email, number],
       );
-      print(result);
       await connection.close();
       return true;
     } catch (e) {
-      print('Error registering user: $e');
       return false;
     }
   }
@@ -438,7 +439,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         return false;
       }
     } catch (e) {
-      print('Error checking email existence: $e');
       return false;
     }
   }
