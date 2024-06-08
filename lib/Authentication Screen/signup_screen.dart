@@ -24,7 +24,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   bool isOtpVerified = false;
   bool isOtpEnabled = false;
+  bool isOtpSending = false;  // Added state variable for OTP sending process
   bool isSigningUp = false;
+  bool isEmailValid = false;  // Added state variable for email validity
 
   @override
   Widget build(BuildContext context) {
@@ -133,6 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         isOtpEnabled = false;
                         isOtpVerified = false;
                         emailOtpController.clear();
+                        isEmailValid = EmailValidator(errorText: 'Please correct email filled').isValid(value);
                       });
                     },
                     validator: MultiValidator([
@@ -142,8 +145,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     decoration: InputDecoration(
                         hintText: 'Email',
                         labelText: 'Email',
-                        suffixIcon: TextButton(
-                          onPressed: () async {
+                        suffixIcon: isEmailValid
+                            ? (isOtpSending
+                            ? SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.blue,
+                          ),
+                        )
+                            : TextButton(
+                          onPressed: isOtpSending
+                              ? null
+                              : () async {
+                            setState(() {
+                              isOtpSending = true;
+                            });
                             // Check if email already exists in the database
                             bool emailExists = await checkEmailExists(emailController.text);
                             if (emailExists) {
@@ -182,9 +199,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 );
                               }
                             }
+                            setState(() {
+                              isOtpSending = false;
+                            });
                           },
                           child: const Text("Send Otp"),
-                        ),
+                        ))
+                            : null,
                         prefixIcon: const Icon(
                           Icons.email,
                           color: Colors.lightBlue,
