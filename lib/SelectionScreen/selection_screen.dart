@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/i18n/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,24 @@ class SelectionScreen extends StatefulWidget {
 }
 
 class _SelectionScreenState extends State<SelectionScreen> {
+
+  String? selectedCategoryType;
+  String? selectedRatePer;
+
+  TextEditingController perNameController = TextEditingController();
+  TextEditingController perEmailController = TextEditingController();
+  TextEditingController perNumberController = TextEditingController();
+  TextEditingController businessNameController = TextEditingController();
+  TextEditingController businessAddressController = TextEditingController();
+  TextEditingController businessCityController = TextEditingController();
+  TextEditingController businessPinCodeController = TextEditingController();
+  TextEditingController businessGSTController = TextEditingController();
+  TextEditingController productNameController = TextEditingController();
+  TextEditingController rateController = TextEditingController();
+  TextEditingController discountRateController = TextEditingController();
+  TextEditingController startDateController = TextEditingController();
+  TextEditingController endDateController = TextEditingController();
+
   int _currentStep = 0;
   String? _selectedLanguage;
   String? _selectedOccupation;
@@ -352,10 +372,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
 
   Widget _buildPersonalDetailForm() {
     final formkey = GlobalKey<FormState>();
-    TextEditingController perNameController = TextEditingController();
-    TextEditingController perPasswordController = TextEditingController();
-    TextEditingController perEmailController = TextEditingController();
-    TextEditingController perNumberController = TextEditingController();
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -399,35 +415,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
                       labelText: 'Email',
                       prefixIcon: Icon(
                         Icons.email,
-                        color: Colors.lightBlue,
-                      ),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(9.0)))),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  controller: perPasswordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Enter Password';
-                    }
-                    // Check if password meets the criteria
-                    bool isValidPassword = _validatePassword(value);
-                    if (!isValidPassword) {
-                      return 'Password must have a minimum of 8 characters and include letters, numbers, and special characters.';
-                    }
-                    return null; // Validation passed
-                  },
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      hintText: 'Password',
-                      labelText: 'Password',
-                      prefixIcon: Icon(
-                        Icons.password,
                         color: Colors.lightBlue,
                       ),
                       border: OutlineInputBorder(
@@ -500,10 +487,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
       'Type 3',
       'Type 4'
     ];
-    TextEditingController businessNameController = TextEditingController();
-    TextEditingController businessAddressController = TextEditingController();
-    TextEditingController businessPinCodeController = TextEditingController();
-    TextEditingController businessGSTController = TextEditingController();
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -579,7 +562,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                       labelText: 'Pin-Code',
                       prefixIcon: Icon(
                         Icons.pin_drop_rounded,
-                        color: Colors.grey,
+                        color: Colors.red,
                       ),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
@@ -588,29 +571,22 @@ class _SelectionScreenState extends State<SelectionScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: DropdownButtonFormField<String>(
-                  items: businessTypes.map((String businessType) {
-                    return DropdownMenuItem<String>(
-                      value: businessType,
-                      child: Text(businessType),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                      selectedBusinessType = newValue;
-                  },
-                  value: selectedBusinessType,
-                  decoration: InputDecoration(
-                    hintText: selectedBusinessType ?? 'Business Type',
-                    labelText: selectedBusinessType ?? 'Business Type',
-                    prefixIcon: const Icon(
-                      Icons.business,
-                      color: Colors.grey,
-                    ),
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.red),
-                      borderRadius: BorderRadius.all(Radius.circular(9)),
-                    ),
-                  ),
+                child: TextFormField(
+                  controller: businessCityController,
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'Enter Business Address'),
+                  ]).call,
+                  decoration: const InputDecoration(
+                      hintText: 'City',
+                      labelText: 'City',
+                      prefixIcon: Icon(
+                        Icons.location_on,
+                        color: Colors.black,
+                      ),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(9.0)))),
                 ),
               ),
               Padding(
@@ -672,31 +648,200 @@ class _SelectionScreenState extends State<SelectionScreen> {
     );
   }
 
+
   Widget _buildSubCategorySelection() {
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          Navigator.pushNamed(context, '/loginScreen');
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.grey,
-        minimumSize: const Size(double.infinity, 60),
-      ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+    final List<String> categoryType = [
+      'Seed Suppliers',
+      'Labour',
+      'Machinery Rental',
+      'Seller'
+    ];
+
+    final List<String> ratePer = ['Acre', 'KG', 'Person', 'Day' ,'KM'
+    ];
+    return SingleChildScrollView(
+      child: Column(
         children: [
-          Text('SubCategory',
-              style: TextStyle(color: Colors.black, fontSize: 18)),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: DropdownButtonFormField<String>(
+              items: categoryType.map((String category) {
+                return DropdownMenuItem<String>(
+                  value: category,
+                  child: Text(category),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedCategoryType = newValue;
+                });
+              },
+              value: selectedCategoryType,
+              decoration: InputDecoration(
+                hintText: selectedCategoryType ?? 'Category Type',
+                labelText: selectedCategoryType ?? 'Category Type',
+                prefixIcon: const Icon(
+                  Icons.business,
+                  color: Colors.grey,
+                ),
+                border: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                  borderRadius: BorderRadius.all(Radius.circular(9)),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: productNameController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(6),
+              ],
+              decoration: const InputDecoration(
+                hintText: 'Product Name',
+                labelText: 'Product Name',
+                prefixIcon: Icon(
+                  Icons.drive_file_rename_outline,
+                  color: Colors.grey,
+                ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                  borderRadius: BorderRadius.all(Radius.circular(9)),
+                ),
+              ),
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: rateController,
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Enter Rate';
+                }
+                return null;
+              },
+              decoration: const InputDecoration(
+                hintText: 'Rate',
+                labelText: 'Rate',
+                prefixIcon: Icon(
+                  Icons.currency_rupee,
+                  color: Colors.grey,
+                ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                  borderRadius: BorderRadius.all(Radius.circular(9)),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: DropdownButtonFormField<String>(
+              items: ratePer.map((String ratePerRate) {
+                return DropdownMenuItem<String>(
+                  value: ratePerRate,
+                  child: Text(ratePerRate),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedRatePer = newValue;
+                });
+              },
+              value: selectedRatePer,
+              decoration: InputDecoration(
+                hintText: selectedRatePer ?? 'Rate Per',
+                labelText: selectedRatePer ?? 'Rate Per',
+                prefixIcon: const Icon(
+                  Icons.local_atm_outlined,
+                  color: Colors.grey,
+                ),
+                border: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                  borderRadius: BorderRadius.all(Radius.circular(9)),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: discountRateController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(6),
+              ],
+              decoration: const InputDecoration(
+                hintText: 'Discount Rate',
+                labelText: 'Discount Rate',
+                prefixIcon: Icon(
+                  Icons.discount,
+                  color: Colors.grey,
+                ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                  borderRadius: BorderRadius.all(Radius.circular(9)),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: startDateController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(6),
+              ],
+              decoration: const InputDecoration(
+                hintText: 'Start Date',
+                labelText: 'Start Date',
+                prefixIcon: Icon(
+                  Icons.today_sharp,
+                  color: Colors.grey,
+                ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                  borderRadius: BorderRadius.all(Radius.circular(9)),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: endDateController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(6),
+              ],
+              decoration: const InputDecoration(
+                hintText: 'End Date',
+                labelText: 'End Date',
+                prefixIcon: Icon(
+                  Icons.today_sharp,
+                  color: Colors.grey,
+                ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                  borderRadius: BorderRadius.all(Radius.circular(9)),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  bool _validatePassword(String password) {
-    // Regular expression to check if password contains at least one letter, one number, and one special character
-    final RegExp regex =
-        RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
-    return regex.hasMatch(password);
-  }
+
 }
