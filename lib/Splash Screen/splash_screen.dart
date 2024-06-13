@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:blackox/Authentication%20Screen/authentication_screen.dart';
 import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/HomeScreen/home_screen.dart'; // Import HomeScreen
 import 'package:flutter/material.dart';
