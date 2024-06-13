@@ -1,10 +1,10 @@
-import 'dart:convert';
-
 import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/i18n/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:intl/intl.dart';
+import 'package:postgres/postgres.dart';
 
 class SelectionScreen extends StatefulWidget {
   final Function(Locale) onLocaleChange;
@@ -33,12 +33,15 @@ class _SelectionScreenState extends State<SelectionScreen> {
   TextEditingController discountRateController = TextEditingController();
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
+  final DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
 
   int _currentStep = 0;
   String? _selectedLanguage;
   String? _selectedOccupation;
   final List<String> _selectedSubCategories = [];
   List<Step> steps = [];
+
+  bool isStored=false;
 
   void _resetSteps(String occupation) {
     setState(() {
@@ -52,6 +55,26 @@ class _SelectionScreenState extends State<SelectionScreen> {
       if (step >= 0 && step < _getSteps().length) {
         _currentStep = step;
       }
+    });
+  }
+  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        controller.text = dateFormatter.format(picked);
+      });
+    }
+  }
+
+  void registerDetails(){
+    setState(() {
+      DateTime registerDate = DateTime.now();
+      registerBusinessDetails(perNameController.text, perNumberController.text, perEmailController.text, businessNameController.text, businessAddressController.text, int.parse(businessPinCodeController.text), businessCityController.text, businessGSTController.text, selectedCategoryType.toString(), productNameController.text, int.parse(rateController.text), selectedRatePer.toString(), discountRateController.text, DateTime.parse(startDateController.text), DateTime.parse(endDateController.text), registerDate);
     });
   }
 
@@ -480,13 +503,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
 
   Widget _buildBusinessDetailForm() {
     final bformkey = GlobalKey<FormState>();
-    String? selectedBusinessType;
-    final List<String> businessTypes = [
-      'Type 1',
-      'Type 2',
-      'Type 3',
-      'Type 4'
-    ];
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -695,11 +711,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
               controller: productNameController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(6),
-              ],
+              keyboardType: TextInputType.text,
               decoration: const InputDecoration(
                 hintText: 'Product Name',
                 labelText: 'Product Name',
@@ -796,11 +808,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
               controller: startDateController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(6),
-              ],
+              readOnly: true,
+              onTap: () => _selectDate(context, startDateController),
               decoration: const InputDecoration(
                 hintText: 'Start Date',
                 labelText: 'Start Date',
@@ -819,11 +828,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
               controller: endDateController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(6),
-              ],
+              readOnly: true,
+              onTap: () => _selectDate(context, endDateController),
               decoration: const InputDecoration(
                 hintText: 'End Date',
                 labelText: 'End Date',
@@ -838,10 +844,62 @@ class _SelectionScreenState extends State<SelectionScreen> {
               ),
             ),
           ),
+          SizedBox(height: ScreenUtility.screenHeight * 0.03),
+          ElevatedButton(
+            onPressed: () {
+              registerDetails();
+              if(isStored)
+              {
+                 Navigator.pushNamed(context, '/homeScreen');
+              }
+              else{
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.red,
+                      content: Text(
+                          'Registration failed. Please try again')),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              minimumSize: Size(
+                  ScreenUtility.screenWidth * 0.8,
+                  ScreenUtility.screenHeight *
+                      0.05), // Increase button size
+            ),
+            child: Text(
+              AppLocalizations.of(context).translate('continue'),
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
         ],
       ),
     );
   }
 
+  Future<bool> registerBusinessDetails(String uName, String uNumber, String uEmail, String bName,String bAddress, int bPinCode, String bCity, String gstNO,String categoryType, String productName, int rate, String ratePer,String discountRate,DateTime startDate,DateTime endDate,DateTime registerDate ) async {
+    try {
+      final connection = await Connection.open(
+        Endpoint(
+          host: '34.71.87.187',
+          port: 5432,
+          database: 'airegulation_dev',
+          username: 'postgres',
+          password: 'India@5555',
+        ),
+        settings: const ConnectionSettings(sslMode: SslMode.disable),
+      );
 
+      connection.execute(
+        'INSERT INTO ai.business_details (u_name,u_number,u_email,b_name,b_address,b_pincode,b_city,gstno,category_type,product_name,rate,rate_per,discount_rate,start_date,end_date,register_date) '
+            'VALUES (\$1, \$2, \$3, \$4,\$5, \$6, \$7, \$8,\$9, \$10, \$11, \$12,\$13, \$14, \$15, \$16)',
+        parameters: [uName,uNumber,uEmail,bName,bAddress,bPinCode,bCity,gstNO,categoryType,productName,rate,ratePer,discountRate,startDate,endDate,registerDate],
+      );
+      isStored=true;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }
