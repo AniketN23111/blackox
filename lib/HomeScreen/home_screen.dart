@@ -22,18 +22,18 @@ class _HomeScreenState extends State<HomeScreen> {
   late Timer _timer;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    HomePage(),
-    CategoriesPage(),
-    AddPage(),
-    NotificationPage(),
-    AccountPage(),
+    const HomePage(),
+    const CategoriesPage(),
+    const AddPage(),
+    const NotificationPage(),
+    const AccountPage(),
   ];
 
   @override
   void initState() {
     super.initState();
     _updateTime();
-    _timer = Timer.periodic(Duration(seconds: 60), (Timer t) => _updateTime());
+    _timer = Timer.periodic(const Duration(seconds: 60), (Timer t) => _updateTime());
   }
 
   @override
@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('$_currentDate $_currentTime', style: TextStyle(fontSize: 16)),
+                Text('$_currentDate $_currentTime', style: const TextStyle(fontSize: 16)),
               ],
             ),
           ],
