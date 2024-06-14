@@ -1,4 +1,4 @@
-import 'package:blackox/Model/business_detials.dart';
+import 'package:blackox/Model/business_details.dart';
 import 'package:postgres/postgres.dart';
 
 class DatabaseService {
