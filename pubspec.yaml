@@ -43,6 +43,7 @@ dependencies:
   email_otp: ^2.1.2
   postgres: ^3.2.1
   shared_preferences: ^2.2.3
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:

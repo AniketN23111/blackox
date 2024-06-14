@@ -1,6 +1,7 @@
 import 'package:blackox/Model/business_details.dart';
 import 'package:blackox/Services/database_services.dart'; // Adjust import based on your file structure
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -126,6 +127,12 @@ class _HomePageState extends State<HomePage> {
                         subtitle: Center(
                             child: Text(
                                 '${filteredList[index].ratePer} - ${filteredList[index].rate}')),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.phone),
+                          onPressed: () {
+                            _showPhoneNumber(context, filteredList[index].uNumber);
+                          },
+                        ),
                         onTap: () {
                           // Handle onTap action if needed
                         },
@@ -170,6 +177,37 @@ class _HomePageState extends State<HomePage> {
               );
             }).toList(),
           ),
+        );
+      },
+    );
+  }
+
+  void _showPhoneNumber(BuildContext context, String phoneNumber) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Phone Number"),
+          content: Text(phoneNumber),
+          actions: [
+            TextButton(
+              child: const Text("Call"),
+              onPressed: () async {
+                final Uri launchUri = Uri(
+                  scheme: 'tel',
+                  path: phoneNumber,
+                );
+                await launchUrl(launchUri);
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         );
       },
     );
