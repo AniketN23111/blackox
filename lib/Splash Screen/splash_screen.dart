@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'package:blackox/Authentication%20Screen/authentication_screen.dart';
 import 'package:blackox/Constants/screen_utility.dart';
-import 'package:blackox/HomeScreen/home_screen.dart'; // Import HomeScreen
+import 'package:blackox/HomeScreen/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,11 +32,10 @@ class _SplashScreenState extends State<SplashScreen> {
             MaterialPageRoute(builder: (context) => const HomeScreen()),
           );
         } else {
-          /*Navigator.pushReplacement(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const AuthenticationScreen()),
-          );*/
-          Navigator.pushNamed(context, '/selectionScreen');
+          );
         }
       },
     );
