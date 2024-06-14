@@ -57,7 +57,6 @@ class DatabaseService {
 
       return businessDetailsList;
     } catch (e) {
-      print('Error fetching business details: $e');
       return [];
     }
   }

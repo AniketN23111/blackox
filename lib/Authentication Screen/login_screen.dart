@@ -212,13 +212,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       await connection.close();
 
-      // Debug prints
-      print('Result: $result');
-      print('Result is not empty: ${result.isNotEmpty}');
 
       return result.isNotEmpty;
     } catch (e) {
-      print('Error fetching user credentials: $e');
       return false;
     }
   }
@@ -243,12 +239,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
       await connection.close();
 
-      // Debug prints
-      print('User Data Result: $result');
-
       return result;
     } catch (e) {
-      print('Error fetching user data: $e');
       return [];
     }
   }
