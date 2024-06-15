@@ -16,7 +16,6 @@ class SelectionScreen extends StatefulWidget {
 }
 
 class _SelectionScreenState extends State<SelectionScreen> {
-
   String? selectedCategoryType;
   String? selectedRatePer;
 
@@ -41,7 +40,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
   final List<String> _selectedSubCategories = [];
   List<Step> steps = [];
 
-  bool isStored=false;
+  bool isStored = false;
+  bool isLoading = false;
 
   void _resetSteps(String occupation) {
     setState(() {
@@ -57,7 +57,9 @@ class _SelectionScreenState extends State<SelectionScreen> {
       }
     });
   }
-  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+
+  Future<void> _selectDate(
+      BuildContext context, TextEditingController controller) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -71,11 +73,47 @@ class _SelectionScreenState extends State<SelectionScreen> {
     }
   }
 
-  void registerDetails(){
+  Future<void> registerDetails() async {
     setState(() {
-      DateTime registerDate = DateTime.now();
-      registerBusinessDetails(perNameController.text, perNumberController.text, perEmailController.text, businessNameController.text, businessAddressController.text, int.parse(businessPinCodeController.text), businessCityController.text, businessGSTController.text, selectedCategoryType.toString(), productNameController.text, int.parse(rateController.text), selectedRatePer.toString(), discountRateController.text, DateTime.parse(startDateController.text), DateTime.parse(endDateController.text), registerDate);
+      isLoading = true;
     });
+
+    try {
+      DateTime registerDate = DateTime.now();
+
+      await registerBusinessDetails(
+        perNameController.text,
+        perNumberController.text,
+        perEmailController.text,
+        businessNameController.text,
+        businessAddressController.text,
+        int.parse(businessPinCodeController.text),
+        businessCityController.text,
+        businessGSTController.text,
+        selectedCategoryType.toString(),
+        productNameController.text,
+        int.parse(rateController.text),
+        selectedRatePer.toString(),
+        discountRateController.text,
+        DateTime.parse(startDateController.text),
+        DateTime.parse(endDateController.text),
+        registerDate,
+      );
+
+      setState(() {
+        isStored = true;
+      });
+
+      Navigator.pushNamed(context, '/authenticationScreen'); // Navigate to authentication screen
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $error')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -155,15 +193,15 @@ class _SelectionScreenState extends State<SelectionScreen> {
               AppLocalizations.of(context).translate('choose_language'),
               style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
-             SizedBox(height: ScreenUtility.screenHeight * 0.02),
+            SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildLanguageButton('English', 'en'),
-             SizedBox(height: ScreenUtility.screenHeight * 0.02),
+            SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildLanguageButton('Marathi', 'mr'),
-             SizedBox(height: ScreenUtility.screenHeight * 0.02),
+            SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildLanguageButton('Hindi', 'hi'),
-             SizedBox(height: ScreenUtility.screenHeight * 0.02),
+            SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildLanguageButton('Gujarati', 'gu'),
-             SizedBox(height: ScreenUtility.screenHeight * 0.02),
+            SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildLanguageButton('Kannada', 'kn'),
           ],
         ),
@@ -178,9 +216,9 @@ class _SelectionScreenState extends State<SelectionScreen> {
               AppLocalizations.of(context).translate('choose_occupation'),
               style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
-             SizedBox(height: ScreenUtility.screenHeight * 0.02),
+            SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildOccupationButton('Farmer', 'assets/Icon/farmerIcon.png'),
-             SizedBox(height: ScreenUtility.screenHeight * 0.02),
+            SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildOccupationButton('Business', 'assets/Icon/businessIcon.png'),
           ],
         ),
@@ -237,13 +275,13 @@ class _SelectionScreenState extends State<SelectionScreen> {
                 style:
                     const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
-               SizedBox(height: ScreenUtility.screenHeight * 0.02),
+              SizedBox(height: ScreenUtility.screenHeight * 0.02),
               _buildSubCategoryButton('Machine rent'),
-               SizedBox(height: ScreenUtility.screenHeight * 0.02),
+              SizedBox(height: ScreenUtility.screenHeight * 0.02),
               _buildSubCategoryButton('Labour'),
-               SizedBox(height: ScreenUtility.screenHeight * 0.02),
+              SizedBox(height: ScreenUtility.screenHeight * 0.02),
               _buildSubCategoryButton('Advisor'),
-               SizedBox(height: ScreenUtility.screenHeight * 0.03),
+              SizedBox(height: ScreenUtility.screenHeight * 0.03),
               ElevatedButton(
                 onPressed: () {
                   // Handle Add More action
@@ -260,7 +298,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   style: const TextStyle(color: Colors.white, fontSize: 24),
                 ),
               ),
-               SizedBox(height: ScreenUtility.screenHeight * 0.03),
+              SizedBox(height: ScreenUtility.screenHeight * 0.03),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/authenticationScreen');
@@ -301,12 +339,12 @@ class _SelectionScreenState extends State<SelectionScreen> {
       style: ElevatedButton.styleFrom(
         backgroundColor:
             _selectedLanguage == language ? Colors.white38 : Colors.grey,
-        minimumSize: Size(ScreenUtility.screenWidth * 0.8,
-            ScreenUtility.screenHeight * 0.05),
+        minimumSize: Size(
+            ScreenUtility.screenWidth * 0.8, ScreenUtility.screenHeight * 0.05),
       ),
       child: Text(
         language,
-        style: const TextStyle(color: Colors.black,fontSize: 24),
+        style: const TextStyle(color: Colors.black, fontSize: 24),
       ),
     );
   }
@@ -317,19 +355,21 @@ class _SelectionScreenState extends State<SelectionScreen> {
       style: ElevatedButton.styleFrom(
         backgroundColor:
             _selectedOccupation == occupation ? Colors.white38 : Colors.grey,
-        minimumSize: Size(ScreenUtility.screenWidth * 0.8,
-            ScreenUtility.screenHeight * 0.05),
+        minimumSize: Size(
+            ScreenUtility.screenWidth * 0.8, ScreenUtility.screenHeight * 0.05),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(AppLocalizations.of(context).translate(occupation),
               style: const TextStyle(color: Colors.black, fontSize: 24)),
-           SizedBox(width: ScreenUtility.screenWidth * 0.02),
-          Image.asset(imagePath,
-              width: ScreenUtility.screenWidth * 0.2,
-              height: ScreenUtility.screenHeight * 0.08,
-            fit: BoxFit.fitHeight,),
+          SizedBox(width: ScreenUtility.screenWidth * 0.02),
+          Image.asset(
+            imagePath,
+            width: ScreenUtility.screenWidth * 0.2,
+            height: ScreenUtility.screenHeight * 0.08,
+            fit: BoxFit.fitHeight,
+          ),
         ],
       ),
     );
@@ -349,8 +389,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? Colors.grey : Colors.grey,
-        minimumSize: Size(ScreenUtility.screenWidth * 0.8,
-            ScreenUtility.screenHeight * 0.05),
+        minimumSize: Size(
+            ScreenUtility.screenWidth * 0.8, ScreenUtility.screenHeight * 0.05),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -386,7 +426,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
               ],
             ),
           ),
-           SizedBox(width: ScreenUtility.screenHeight * 0.01),
+          SizedBox(width: ScreenUtility.screenHeight * 0.01),
           Text(subCategory,
               style: const TextStyle(color: Colors.black, fontSize: 24)),
         ],
@@ -420,7 +460,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.person,
                         color: Colors.green,
                       ),
-                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
@@ -442,7 +483,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.email,
                         color: Colors.lightBlue,
                       ),
-                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
@@ -470,13 +512,14 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.phone,
                         color: Colors.grey,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius: BorderRadius.all(Radius.circular(9)))),
                 ),
               ),
-               SizedBox(height: ScreenUtility.screenHeight * 0.02),
+              SizedBox(height: ScreenUtility.screenHeight * 0.02),
               ElevatedButton(
                 onPressed: () {
                   if (formkey.currentState!.validate()) {
@@ -533,7 +576,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.person,
                         color: Colors.green,
                       ),
-                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
@@ -554,7 +598,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.location_city_outlined,
                         color: Colors.lightBlue,
                       ),
-                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
@@ -586,7 +631,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.pin_drop_rounded,
                         color: Colors.red,
                       ),
-                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius: BorderRadius.all(Radius.circular(9)))),
@@ -606,11 +652,12 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.location_on,
                         color: Colors.black,
                       ),
-                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
-                          BorderRadius.all(Radius.circular(9.0)))),
+                              BorderRadius.all(Radius.circular(9.0)))),
                 ),
               ),
               Padding(
@@ -638,13 +685,14 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.format_list_numbered_rtl_sharp,
                         color: Colors.grey,
                       ),
-                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius: BorderRadius.all(Radius.circular(9)))),
                 ),
               ),
-               SizedBox(height: ScreenUtility.screenHeight * 0.02),
+              SizedBox(height: ScreenUtility.screenHeight * 0.02),
               ElevatedButton(
                 onPressed: () {
                   if (bformkey.currentState!.validate()) {
@@ -673,7 +721,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
     );
   }
 
-
   Widget _buildSubCategorySelection() {
     final List<String> categoryType = [
       'Seed Suppliers',
@@ -682,8 +729,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
       'Seller'
     ];
 
-    final List<String> ratePer = ['Acre', 'KG', 'Person', 'Day' ,'KM'
-    ];
+    final List<String> ratePer = ['Acre', 'KG', 'Person', 'Day', 'KM'];
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -709,7 +755,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.business,
                   color: Colors.grey,
                 ),
-                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -729,7 +776,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.drive_file_rename_outline,
                   color: Colors.grey,
                 ),
-                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -737,7 +785,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
               ),
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
@@ -756,7 +803,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.currency_rupee,
                   color: Colors.grey,
                 ),
-                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -786,7 +834,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.local_atm_outlined,
                   color: Colors.grey,
                 ),
-                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -810,7 +859,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.discount,
                   color: Colors.grey,
                 ),
-                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -831,7 +881,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.today_sharp,
                   color: Colors.grey,
                 ),
-                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -852,7 +903,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.today_sharp,
                   color: Colors.grey,
                 ),
-                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -862,39 +914,43 @@ class _SelectionScreenState extends State<SelectionScreen> {
           ),
           SizedBox(height: ScreenUtility.screenHeight * 0.03),
           ElevatedButton(
-            onPressed: () {
-              registerDetails();
-              if(isStored)
-              {
-                 Navigator.pushNamed(context, '/LoginScreen');
-              }
-              else{
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    backgroundColor: Colors.red,
-                      content: Text(
-                          'Registration failed. Please try again')),
-                );
-              }
-            },
+            onPressed: isLoading ? null : registerDetails,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
-              minimumSize: Size(
-                  ScreenUtility.screenWidth * 0.8,
-                  ScreenUtility.screenHeight *
-                      0.05), // Increase button size
+              minimumSize: Size(ScreenUtility.screenWidth * 0.8,
+                  ScreenUtility.screenHeight * 0.05), // Increase button size
             ),
-            child: Text(
-              AppLocalizations.of(context).translate('continue'),
-              style: const TextStyle(color: Colors.white, fontSize: 24),
-            ),
+            child: isLoading
+                ? const CircularProgressIndicator(
+                    color: Colors.white,
+                  )
+                : const Text(
+                    'Continue',
+                    style: TextStyle(color: Colors.white, fontSize: 24),
+                  ),
           ),
         ],
       ),
     );
   }
 
-  Future<bool> registerBusinessDetails(String uName, String uNumber, String uEmail, String bName,String bAddress, int bPinCode, String bCity, String gstNO,String categoryType, String productName, int rate, String ratePer,String discountRate,DateTime startDate,DateTime endDate,DateTime registerDate ) async {
+  Future<bool> registerBusinessDetails(
+      String uName,
+      String uNumber,
+      String uEmail,
+      String bName,
+      String bAddress,
+      int bPinCode,
+      String bCity,
+      String gstNO,
+      String categoryType,
+      String productName,
+      int rate,
+      String ratePer,
+      String discountRate,
+      DateTime startDate,
+      DateTime endDate,
+      DateTime registerDate) async {
     try {
       final connection = await Connection.open(
         Endpoint(
@@ -909,10 +965,27 @@ class _SelectionScreenState extends State<SelectionScreen> {
 
       connection.execute(
         'INSERT INTO ai.business_details (u_name,u_number,u_email,b_name,b_address,b_pincode,b_city,gstno,category_type,product_name,rate,rate_per,discount_rate,start_date,end_date,register_date) '
-            'VALUES (\$1, \$2, \$3, \$4,\$5, \$6, \$7, \$8,\$9, \$10, \$11, \$12,\$13, \$14, \$15, \$16)',
-        parameters: [uName,uNumber,uEmail,bName,bAddress,bPinCode,bCity,gstNO,categoryType,productName,rate,ratePer,discountRate,startDate,endDate,registerDate],
+        'VALUES (\$1, \$2, \$3, \$4,\$5, \$6, \$7, \$8,\$9, \$10, \$11, \$12,\$13, \$14, \$15, \$16)',
+        parameters: [
+          uName,
+          uNumber,
+          uEmail,
+          bName,
+          bAddress,
+          bPinCode,
+          bCity,
+          gstNO,
+          categoryType,
+          productName,
+          rate,
+          ratePer,
+          discountRate,
+          startDate,
+          endDate,
+          registerDate
+        ],
       );
-      isStored=true;
+      isLoading =false;
       return true;
     } catch (e) {
       return false;
