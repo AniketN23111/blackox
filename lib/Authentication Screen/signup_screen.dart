@@ -64,6 +64,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           Icons.person,
                           color: Colors.green,
                         ),
+                        contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius:
@@ -93,6 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           Icons.password,
                           color: Colors.lightBlue,
                         ),
+                        contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius:
@@ -120,6 +122,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           Icons.phone,
                           color: Colors.grey,
                         ),
+                        contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius:
@@ -213,6 +216,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           Icons.email,
                           color: Colors.lightBlue,
                         ),
+                        contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                         border: const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius:
@@ -260,7 +264,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         child: const Text(
                           'Verify Otp',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
+                          style: TextStyle(color: Colors.white, fontSize: 22),
                         ),
                       ),
                     ),
@@ -290,6 +294,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             Icons.email,
                             color: Colors.grey,
                           ),
+
                         ),
                         enabled: isOtpEnabled,
                       ),
@@ -351,7 +356,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     )
                         : const Text(
                       'Sign Up',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style: TextStyle(color: Colors.white, fontSize: 24),
                     ),
                   ),
                 ),
@@ -361,7 +366,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       onPressed: () {},
                       child: const Text(
                         "Sign Up With Google",
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: Colors.black,fontSize: 22),
                       )),
                 ),
                 SizedBox(height: ScreenUtility.screenHeight * 0.03),

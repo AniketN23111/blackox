@@ -108,6 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Icons.email,
                           color: Colors.lightBlue,
                         ),
+                        contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius: BorderRadius.all(Radius.circular(9.0)))),
@@ -136,6 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Icons.password,
                           color: Colors.lightBlue,
                         ),
+                        contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
                             borderRadius: BorderRadius.all(Radius.circular(9.0)))),
@@ -149,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       backgroundColor: Colors.blue,
                       minimumSize: Size(
                         ScreenUtility.screenWidth * 0.8,
-                        ScreenUtility.screenHeight * 0.05,
+                        ScreenUtility.screenHeight * 0.07,
                       ), // Increase button size
                     ),
                     child: _isLoggingIn
@@ -158,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     )
                         : const Text(
                       'Log In',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style: TextStyle(color: Colors.white, fontSize: 24),
                     ),
                   ),
                 ),
@@ -168,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {},
                       child: const Text(
                         "Sign IN With Google",
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: Colors.black,fontSize: 22),
                       )),
                 ),
                 SizedBox(height: ScreenUtility.screenHeight * 0.03),

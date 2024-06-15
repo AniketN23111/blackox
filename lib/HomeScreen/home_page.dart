@@ -1,7 +1,8 @@
-import 'package:blackox/Model/business_details.dart';
-import 'package:blackox/Services/database_services.dart'; // Adjust import based on your file structure
 import 'package:flutter/material.dart';
+import 'package:blackox/Model/business_details.dart';
+import 'package:blackox/Services/database_services.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,14 +16,13 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String? _selectedCategory;
-
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -31,12 +31,13 @@ class _HomePageState extends State<HomePage> {
           controller: _searchController,
           decoration: InputDecoration(
             hintText: 'Search...',
+            hintStyle: const TextStyle(fontSize: 22),
             border: InputBorder.none,
             prefixIcon: IconButton(
               onPressed: () {
                 // Handle Search Button press
               },
-              icon: const Icon(Icons.search),
+              icon: const Icon(Icons.search,size: 30,),
             ),
             suffixIcon: Row(
               mainAxisSize: MainAxisSize.min,
@@ -122,20 +123,49 @@ class _HomePageState extends State<HomePage> {
                   return ListView.builder(
                     itemCount: filteredList.length,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Center(child: Text(filteredList[index].bName)),
-                        subtitle: Center(
-                            child: Text(
-                                '${filteredList[index].ratePer} - ${filteredList[index].rate}')),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.phone),
-                          onPressed: () {
-                            _showPhoneNumber(context, filteredList[index].uNumber);
+                      // Determine color based on category
+                      Color itemColor = Colors.grey; // Default color
+                      switch (filteredList[index].categoryType) {
+                        case 'Seed Suppliers':
+                          itemColor = Colors.lightBlueAccent;
+                          break;
+                        case 'Machinery Rental':
+                          itemColor = Colors.green;
+                          break;
+                        case 'Labour':
+                          itemColor = Colors.yellowAccent;
+                          break;
+                      // Add more cases for other categories as needed
+                      }
+
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: itemColor,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ListTile(
+                          title: Center(child: Text(filteredList[index].bName,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),)),
+                          subtitle: Center(child: Text('${filteredList[index].ratePer} - ${filteredList[index].rate}₹',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),)),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.phone),
+                            onPressed: () {
+                              _showPhoneNumber(context, filteredList[index].uNumber);
+                            },
+                          ),
+                          onTap: () {
+                            // Handle onTap action if needed
                           },
                         ),
-                        onTap: () {
-                          // Handle onTap action if needed
-                        },
                       );
                     },
                   );
@@ -198,6 +228,7 @@ class _HomePageState extends State<HomePage> {
                   path: phoneNumber,
                 );
                 await launchUrl(launchUri);
+                // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();
               },
             ),

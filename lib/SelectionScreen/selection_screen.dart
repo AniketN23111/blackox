@@ -62,7 +62,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      lastDate: DateTime(3000),
     );
     if (picked != null) {
       setState(() {
@@ -153,7 +153,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
           children: [
             Text(
               AppLocalizations.of(context).translate('choose_language'),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
              SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildLanguageButton('English', 'en'),
@@ -176,7 +176,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
           children: [
             Text(
               AppLocalizations.of(context).translate('choose_occupation'),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
              SizedBox(height: ScreenUtility.screenHeight * 0.02),
             _buildOccupationButton('Farmer', 'assets/Icon/farmerIcon.png'),
@@ -235,7 +235,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
               Text(
                 AppLocalizations.of(context).translate('sub_category'),
                 style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
                SizedBox(height: ScreenUtility.screenHeight * 0.02),
               _buildSubCategoryButton('Machine rent'),
@@ -257,13 +257,13 @@ class _SelectionScreenState extends State<SelectionScreen> {
                 ),
                 child: Text(
                   AppLocalizations.of(context).translate('add_more'),
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                  style: const TextStyle(color: Colors.white, fontSize: 24),
                 ),
               ),
                SizedBox(height: ScreenUtility.screenHeight * 0.03),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/homeScreen');
+                  Navigator.pushNamed(context, '/authenticationScreen');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
@@ -274,7 +274,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                 ),
                 child: Text(
                   AppLocalizations.of(context).translate('continue'),
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                  style: const TextStyle(color: Colors.white, fontSize: 24),
                 ),
               ),
             ],
@@ -306,7 +306,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
       ),
       child: Text(
         language,
-        style: const TextStyle(color: Colors.black),
+        style: const TextStyle(color: Colors.black,fontSize: 24),
       ),
     );
   }
@@ -324,11 +324,12 @@ class _SelectionScreenState extends State<SelectionScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(AppLocalizations.of(context).translate(occupation),
-              style: const TextStyle(color: Colors.black, fontSize: 18)),
+              style: const TextStyle(color: Colors.black, fontSize: 24)),
            SizedBox(width: ScreenUtility.screenWidth * 0.02),
           Image.asset(imagePath,
-              width: ScreenUtility.screenWidth * 0.1,
-              height: ScreenUtility.screenHeight * 0.04),
+              width: ScreenUtility.screenWidth * 0.2,
+              height: ScreenUtility.screenHeight * 0.08,
+            fit: BoxFit.fitHeight,),
         ],
       ),
     );
@@ -387,7 +388,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
           ),
            SizedBox(width: ScreenUtility.screenHeight * 0.01),
           Text(subCategory,
-              style: const TextStyle(color: Colors.black, fontSize: 18)),
+              style: const TextStyle(color: Colors.black, fontSize: 24)),
         ],
       ),
     );
@@ -419,10 +420,11 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.person,
                         color: Colors.green,
                       ),
+                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
-                              BorderRadius.all(Radius.circular(9.0)))),
+                              BorderRadius.all(Radius.circular(12.0)))),
                 ),
               ),
               Padding(
@@ -440,6 +442,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.email,
                         color: Colors.lightBlue,
                       ),
+                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
@@ -467,6 +470,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.phone,
                         color: Colors.grey,
                       ),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius: BorderRadius.all(Radius.circular(9)))),
@@ -491,7 +495,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                 ),
                 child: Text(
                   AppLocalizations.of(context).translate('continue'),
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                  style: const TextStyle(color: Colors.white, fontSize: 24),
                 ),
               ),
             ],
@@ -529,6 +533,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.person,
                         color: Colors.green,
                       ),
+                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
@@ -549,6 +554,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.location_city_outlined,
                         color: Colors.lightBlue,
                       ),
+                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
@@ -580,6 +586,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.pin_drop_rounded,
                         color: Colors.red,
                       ),
+                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius: BorderRadius.all(Radius.circular(9)))),
@@ -599,6 +606,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.location_on,
                         color: Colors.black,
                       ),
+                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius:
@@ -630,6 +638,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.format_list_numbered_rtl_sharp,
                         color: Colors.grey,
                       ),
+                      contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
                           borderRadius: BorderRadius.all(Radius.circular(9)))),
@@ -654,7 +663,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                 ),
                 child: Text(
                   AppLocalizations.of(context).translate('continue'),
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                  style: const TextStyle(color: Colors.white, fontSize: 24),
                 ),
               ),
             ],
@@ -700,6 +709,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.business,
                   color: Colors.grey,
                 ),
+                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -719,6 +729,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.drive_file_rename_outline,
                   color: Colors.grey,
                 ),
+                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -745,6 +756,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.currency_rupee,
                   color: Colors.grey,
                 ),
+                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -774,6 +786,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.local_atm_outlined,
                   color: Colors.grey,
                 ),
+                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -797,6 +810,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.discount,
                   color: Colors.grey,
                 ),
+                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -817,6 +831,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.today_sharp,
                   color: Colors.grey,
                 ),
+                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -837,6 +852,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.today_sharp,
                   color: Colors.grey,
                 ),
+                contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -850,7 +866,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
               registerDetails();
               if(isStored)
               {
-                 Navigator.pushNamed(context, '/homeScreen');
+                 Navigator.pushNamed(context, '/LoginScreen');
               }
               else{
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -870,7 +886,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
             ),
             child: Text(
               AppLocalizations.of(context).translate('continue'),
-              style: const TextStyle(color: Colors.white, fontSize: 18),
+              style: const TextStyle(color: Colors.white, fontSize: 24),
             ),
           ),
         ],

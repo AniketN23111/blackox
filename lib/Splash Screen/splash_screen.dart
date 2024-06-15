@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:blackox/Authentication%20Screen/authentication_screen.dart';
 import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/HomeScreen/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -32,10 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
             MaterialPageRoute(builder: (context) => const HomeScreen()),
           );
         } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const AuthenticationScreen()),
-          );
+          Navigator.pushNamed(context, '/letStartedScreen');
         }
       },
     );

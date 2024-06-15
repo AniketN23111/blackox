@@ -46,7 +46,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   ),
                   child: const Text(
                     'Login',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(color: Colors.white, fontSize: 24),
                   ),
                 ),
                  SizedBox(height: ScreenUtility.screenHeight * 0.03),
@@ -61,13 +61,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   ),
                   child: const Text(
                     'Sign UP',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    style: TextStyle(color: Colors.white, fontSize: 24),
                   ),
                 ),
                  SizedBox(height: ScreenUtility.screenHeight * 0.03),
                 const Text(
                   'OR',
-                  style: TextStyle(color: Colors.black, fontSize: 20),
+                  style: TextStyle(color: Colors.black, fontSize: 28),
                 ),
                  SizedBox(height: ScreenUtility.screenHeight * 0.03),
                 SizedBox(
@@ -76,7 +76,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   child: ElevatedButton.icon(
                     onPressed: () {},
                     icon: Image.asset('assets/Icon/googleIcon.png'),
-                    label: const Text('Continue with Google'),
+                    label: const Text('Continue with Google',style: TextStyle(fontSize: 22),),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent
@@ -90,7 +90,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                   child: ElevatedButton.icon(
                     onPressed: () {},
                     icon: Image.asset('assets/Icon/WhatsAppIcon.png'),
-                    label: const Text("Continue with WhatsApp"),
+                    label: const Text("Continue with WhatsApp",style: TextStyle(fontSize: 22)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent

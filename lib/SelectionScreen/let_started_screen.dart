@@ -42,7 +42,7 @@ class LetStartedScreen extends StatelessWidget {
            const Text('"Cultivating knowledge starts here"',
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 25,
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
               ),
             ),
