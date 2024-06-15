@@ -1,3 +1,4 @@
+import 'package:blackox/Admin/admin_panel.dart';
 import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/HomeScreen/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -28,33 +29,40 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoggingIn = true; // Set login state to true when login process starts
       });
       try {
-        final isValid = await fetchUserCredentials(
-          emailController.text.toString(),
-          passwordController.text.toString(),
-        );
+        String enteredEmail = emailController.text.toString();
+        String enteredPassword = passwordController.text.toString();
+
+        // Directly check for admin credentials
+        if (enteredEmail == 'admin@gmail.com' && enteredPassword == 'admin123@') {
+          await _storeDetailsInPrefs();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminPanel()), // Replace with your admin panel widget
+          );
+          return; // Exit function early if admin credentials match
+        }
+
+        // Check credentials in the database
+        final isValid = await fetchUserCredentials(enteredEmail, enteredPassword);
 
         if (isValid) {
           // Fetch user data after successful login
-          userData = await fetchUserData(emailController.text.toString());
+          userData = await fetchUserData(enteredEmail);
           await _storeDetailsInPrefs();
           // Navigate to the page where the user can choose a Device
           Navigator.pushReplacement(
-            // ignore: use_build_context_synchronously
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),
           );
         } else {
           // Show error message for invalid credentials
-          // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Invalid username or password')),
           );
         }
       } catch (e) {
         // Handle errors
-        // ignore: avoid_print
         print('Login failed: $e');
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login failed. Please try again.')),
         );
@@ -65,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
   }
+
 
   Future<void> _storeDetailsInPrefs() async {
     final prefs = await SharedPreferences.getInstance();
