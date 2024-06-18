@@ -1,4 +1,6 @@
 import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/Model/category_type.dart';
+import 'package:blackox/Services/database_services.dart';
 import 'package:blackox/i18n/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,9 +41,27 @@ class _SelectionScreenState extends State<SelectionScreen> {
   String? _selectedOccupation;
   final List<String> _selectedSubCategories = [];
   List<Step> steps = [];
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategories();
+  }
 
   bool isStored = false;
   bool isLoading = false;
+  final DatabaseService databaseService = DatabaseService();
+  List<CategoryType> _categories = [];
+  Map<String, Color> _categoryColors = {};
+  Future<void> _fetchCategories() async {
+    final categories = await databaseService.getCategoryType();
+    setState(() {
+      _categories = categories;
+      _categoryColors = {
+        for (var category in categories)
+          category.categoryName: Color(int.parse(category.color, radix: 16)),
+      };
+    });
+  }
 
   void _resetSteps(String occupation) {
     setState(() {
@@ -722,13 +742,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
   }
 
   Widget _buildSubCategorySelection() {
-    final List<String> categoryType = [
-      'Seed Suppliers',
-      'Labour',
-      'Machinery Rental',
-      'Seller'
-    ];
-
     final List<String> ratePer = ['Acre', 'KG', 'Person', 'Day', 'KM'];
     return SingleChildScrollView(
       child: Column(
@@ -736,10 +749,10 @@ class _SelectionScreenState extends State<SelectionScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: DropdownButtonFormField<String>(
-              items: categoryType.map((String category) {
+              items: _categories.map((CategoryType category) {
                 return DropdownMenuItem<String>(
-                  value: category,
-                  child: Text(category),
+                  value: category.categoryName,
+                  child: Text(category.categoryName),
                 );
               }).toList(),
               onChanged: (String? newValue) {
@@ -756,7 +769,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   color: Colors.grey,
                 ),
                 contentPadding:
-                    const EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                const EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -777,7 +790,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   color: Colors.grey,
                 ),
                 contentPadding:
-                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -804,7 +817,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   color: Colors.grey,
                 ),
                 contentPadding:
-                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -835,7 +848,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   color: Colors.grey,
                 ),
                 contentPadding:
-                    const EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                const EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -860,7 +873,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   color: Colors.grey,
                 ),
                 contentPadding:
-                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -882,7 +895,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   color: Colors.grey,
                 ),
                 contentPadding:
-                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -904,7 +917,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   color: Colors.grey,
                 ),
                 contentPadding:
-                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -922,17 +935,18 @@ class _SelectionScreenState extends State<SelectionScreen> {
             ),
             child: isLoading
                 ? const CircularProgressIndicator(
-                    color: Colors.white,
-                  )
+              color: Colors.white,
+            )
                 : const Text(
-                    'Continue',
-                    style: TextStyle(color: Colors.white, fontSize: 24),
-                  ),
+              'Continue',
+              style: TextStyle(color: Colors.white, fontSize: 24),
+            ),
           ),
         ],
       ),
     );
   }
+
 
   Future<bool> registerBusinessDetails(
       String uName,

@@ -184,6 +184,7 @@ class _AdminPanelState extends State<AdminPanel> {
                             onPressed: () {
                               setState(() => currentColor = pickerColor);
                               Navigator.of(context).pop();
+                              print(pickerColor);
                             },
                           ),
                         ],
