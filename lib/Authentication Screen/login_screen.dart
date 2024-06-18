@@ -37,8 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
           await _storeDetailsInPrefs();
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const AdminPanel()), // Replace with your admin panel widget
+            MaterialPageRoute(builder: (context) => const AdminPanel()),
           );
+          _isLoggingIn = false;
           return; // Exit function early if admin credentials match
         }
 
