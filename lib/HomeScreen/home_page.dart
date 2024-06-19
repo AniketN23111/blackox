@@ -1,13 +1,12 @@
-// Assume DatabaseService class in database_services.dart
 import 'package:flutter/material.dart';
 import 'package:blackox/Model/business_details.dart';
 import 'package:blackox/Model/category_type.dart';
 import 'package:blackox/Services/database_services.dart'; // Assuming DatabaseService is imported correctly
-import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -28,7 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchCategories() async {
     try {
-      final categories = await databaseService.getCategoryType(); // Adjust method name according to your implementation
+      final categories = await databaseService.getCategoryType();
       setState(() {
         _categories = categories;
       });
@@ -149,10 +148,9 @@ class _HomePageState extends State<HomePage> {
                       final categoryColorString = _getCategoryColorString(filteredList[index].categoryType);
                       final categoryIconString = _getCategoryIconString(filteredList[index].categoryType);
 
-                      print('Category: ${filteredList[index].categoryType}, Color: $categoryColorString');
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
                           color: Color(int.tryParse(categoryColorString) ?? 0xFFFFFFFF), // Convert color string to Color object
                           borderRadius: BorderRadius.circular(12),
@@ -165,32 +163,44 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-                        child: ListTile(
-                          title: Center(
-                            child: Text(
-                              filteredList[index].bName,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 100, // Adjust width as needed
+                              height: 100, // Adjust height as needed
+                              decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                borderRadius: BorderRadius.circular(6), // Adjust if you want rounded corners
+                                image: DecorationImage(
+                                  image: NetworkImage(categoryIconString), // Provide a default image if the URL is empty
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
                             ),
-                          ),
-                          subtitle: Center(
-                            child: Text(
-                              '${filteredList[index].ratePer} - ${filteredList[index].rate}₹',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            const SizedBox(width: 16), // Space between image and text
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    filteredList[index].bName,
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                                  ),
+                                  const SizedBox(height: 4), // Space between text and rate info
+                                  Text(
+                                    '${filteredList[index].ratePer} - ${filteredList[index].rate}₹',
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.phone),
-                            onPressed: () {
-                              _showPhoneNumber(context, filteredList[index].uNumber);
-                            },
-                          ),
-                          onTap: () {
-                            // Handle onTap action if needed
-                          },
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            child: categoryIconString.isNotEmpty ? Image.network(categoryIconString) : Icon(Icons.category),
-                          ),
+                            IconButton(
+                              icon: const Icon(Icons.phone),
+                              onPressed: () {
+                                _showPhoneNumber(context, filteredList[index].uNumber);
+                              },
+                            ),
+                          ],
                         ),
                       );
                     },
@@ -242,7 +252,6 @@ class _HomePageState extends State<HomePage> {
               Navigator.of(context).pop();
             },
             items: <String>[
-              'All Categories',
               ..._categories.map((category) => category.categoryName),
             ].map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
@@ -261,11 +270,11 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Phone Number"),
-          content: Text(phoneNumber),
+          title: const Text("Phone Number",style: TextStyle(fontSize: 30),),
+          content: Text(phoneNumber,style: const TextStyle(fontSize: 20),),
           actions: [
             TextButton(
-              child: const Text("Call"),
+              child: const Text("Call",style: TextStyle(fontSize:20),),
               onPressed: () async {
                 final Uri launchUri = Uri(
                   scheme: 'tel',
@@ -276,7 +285,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             TextButton(
-              child: const Text("Close"),
+              child: const Text("Close",style: TextStyle(fontSize:20),),
               onPressed: () {
                 Navigator.of(context).pop();
               },

@@ -1,11 +1,14 @@
 import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/GoogleApi/cloudApi.dart';
 import 'package:blackox/Model/category_type.dart';
 import 'package:blackox/Services/database_services.dart';
 import 'package:blackox/i18n/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:postgres/postgres.dart';
 
 class SelectionScreen extends StatefulWidget {
@@ -41,10 +44,20 @@ class _SelectionScreenState extends State<SelectionScreen> {
   String? _selectedOccupation;
   final List<String> _selectedSubCategories = [];
   List<Step> steps = [];
+
+  Uint8List? _uploadedImageBytes;
+  String? _downloadUrl;
+  final ImagePicker _picker = ImagePicker();
+  CloudApi? cloudApi;
+  bool _uploading = false;
+
+
   @override
   void initState() {
     super.initState();
     _fetchCategories();
+    _loadCloudApi();
+    _requestPermissions();
   }
 
   bool isStored = false;
@@ -92,6 +105,71 @@ class _SelectionScreenState extends State<SelectionScreen> {
       });
     }
   }
+  Future<void> _pickAndUploadImage() async {
+    setState(() {
+      _uploading = true; // Start uploading, show progress indicator
+    });
+
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No file picked')),
+      );
+      setState(() {
+        _uploading = false; // Cancel upload, hide progress indicator
+      });
+      return;
+    }
+
+    if (cloudApi == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cloud API not initialized')),
+      );
+      setState(() {
+        _uploading = false; // Cancel upload, hide progress indicator
+      });
+      return;
+    }
+
+    Uint8List imageBytes = await pickedFile.readAsBytes();
+    String fileName = pickedFile.name;
+
+    try {
+      // Upload the image to the bucket
+      final response = await cloudApi!.save(fileName, imageBytes);
+      final downloadUrl = await cloudApi!.getDownloadUrl(fileName);
+
+      // Store the image bytes to display it
+      setState(() {
+        _uploadedImageBytes = imageBytes;
+        _downloadUrl = downloadUrl;
+        _uploading = false; // Upload finished, hide progress indicator
+      });
+    } catch (e) {
+      print("Error uploading image: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to upload image: $e')),
+      );
+      setState(() {
+        _uploading = false; // Error in upload, hide progress indicator
+      });
+    }
+  }
+  Future<void> _loadCloudApi() async {
+    String jsonCredentials = await rootBundle.loadString(
+        'assets/GoogleJson/clean-emblem-394910-905637ad42b3.json');
+    setState(() {
+      cloudApi = CloudApi(jsonCredentials);
+    });
+  }
+
+  Future<void> _requestPermissions() async {
+    if (await Permission.photos.request().isGranted) {
+      print("Gallery access granted");
+    } else {
+      print("Gallery access denied");
+    }
+  }
 
   Future<void> registerDetails() async {
     setState(() {
@@ -118,6 +196,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
         DateTime.parse(startDateController.text),
         DateTime.parse(endDateController.text),
         registerDate,
+        _downloadUrl!
       );
 
       setState(() {
@@ -532,7 +611,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                         Icons.phone,
                         color: Colors.grey,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
+                      contentPadding: EdgeInsets.symmetric(
                           vertical: 25.0, horizontal: 10.0),
                       border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.red),
@@ -925,13 +1004,35 @@ class _SelectionScreenState extends State<SelectionScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 20),
+          SizedBox(
+            height: ScreenUtility.screenHeight * 0.4,
+            width: ScreenUtility.screenWidth * 0.8,
+            child: _downloadUrl != null
+                ? Padding(
+              padding: const EdgeInsets.all(20),
+              child: Image.network(_downloadUrl!),
+            )
+                : _uploading
+                ? const Padding(
+              padding: EdgeInsets.all(20),
+              child: CircularProgressIndicator(),
+            )
+                : Container(),
+          ),
+          ElevatedButton(
+            onPressed: _uploading ? null : _pickAndUploadImage,
+            child: _uploading
+                ? const CircularProgressIndicator() // Show progress indicator
+                : const Text("Upload Icon"),
+          ),
           SizedBox(height: ScreenUtility.screenHeight * 0.03),
           ElevatedButton(
             onPressed: isLoading ? null : registerDetails,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
               minimumSize: Size(ScreenUtility.screenWidth * 0.8,
-                  ScreenUtility.screenHeight * 0.05), // Increase button size
+                  ScreenUtility.screenHeight * 0.05),
             ),
             child: isLoading
                 ? const CircularProgressIndicator(
@@ -964,7 +1065,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
       String discountRate,
       DateTime startDate,
       DateTime endDate,
-      DateTime registerDate) async {
+      DateTime registerDate,
+      String imageUrl) async {
     try {
       final connection = await Connection.open(
         Endpoint(
@@ -978,8 +1080,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
       );
 
       connection.execute(
-        'INSERT INTO ai.business_details (u_name,u_number,u_email,b_name,b_address,b_pincode,b_city,gstno,category_type,product_name,rate,rate_per,discount_rate,start_date,end_date,register_date) '
-        'VALUES (\$1, \$2, \$3, \$4,\$5, \$6, \$7, \$8,\$9, \$10, \$11, \$12,\$13, \$14, \$15, \$16)',
+        'INSERT INTO ai.business_details (u_name,u_number,u_email,b_name,b_address,b_pincode,b_city,gstno,category_type,product_name,rate,rate_per,discount_rate,start_date,end_date,register_date,image_url) '
+        'VALUES (\$1, \$2, \$3, \$4,\$5, \$6, \$7, \$8,\$9, \$10, \$11, \$12,\$13, \$14, \$15, \$16, \$17)',
         parameters: [
           uName,
           uNumber,
@@ -996,7 +1098,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
           discountRate,
           startDate,
           endDate,
-          registerDate
+          registerDate,
+          imageUrl
         ],
       );
       isLoading =false;
