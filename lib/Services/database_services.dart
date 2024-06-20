@@ -53,6 +53,7 @@ class DatabaseService {
           startDate: row[13] as DateTime,
           endDate: row[14] as DateTime,
           registerDate: row[15] as DateTime,
+          imageUrl: row[16] as String,
         ));
       }
 

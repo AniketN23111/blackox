@@ -4,7 +4,6 @@ import 'package:blackox/Model/category_type.dart';
 import 'package:blackox/Services/database_services.dart'; // Assuming DatabaseService is imported correctly
 import 'package:url_launcher/url_launcher.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -146,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       // Fetch color string for category
                       final categoryColorString = _getCategoryColorString(filteredList[index].categoryType);
-                      final categoryIconString = _getCategoryIconString(filteredList[index].categoryType);
+                      final businessDetailImageUrl = _getBusinessImageUrl(filteredList[index]);
 
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -172,7 +171,7 @@ class _HomePageState extends State<HomePage> {
                                 shape: BoxShape.rectangle,
                                 borderRadius: BorderRadius.circular(6), // Adjust if you want rounded corners
                                 image: DecorationImage(
-                                  image: NetworkImage(categoryIconString), // Provide a default image if the URL is empty
+                                  image: NetworkImage(businessDetailImageUrl), // Use the correct image URL
                                   fit: BoxFit.fill,
                                 ),
                               ),
@@ -230,11 +229,18 @@ class _HomePageState extends State<HomePage> {
     return colorString;
   }
 
-
-  String _getCategoryIconString(String categoryType) {
-    final category = _categories.firstWhere((element) => element.categoryName == categoryType, orElse: () => CategoryType(categoryName: categoryType, color: '#000000', imageIcon: ''));
-    return category.imageIcon;
+  String _getBusinessImageUrl(BusinessDetails businessDetail) {
+    if (businessDetail.imageUrl != null && businessDetail.imageUrl.isNotEmpty && businessDetail.imageUrl != 'DEFAULT') {
+      return businessDetail.imageUrl;
+    } else {
+      final category = _categories.firstWhere(
+            (element) => element.categoryName == businessDetail.categoryType,
+        orElse: () => CategoryType(categoryName: businessDetail.categoryType, color: '#000000', imageIcon: ''),
+      );
+      return category.imageIcon;
+    }
   }
+
 
   void _showCategoryFilterDialog(BuildContext context) {
     showDialog(
@@ -270,11 +276,11 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Phone Number",style: TextStyle(fontSize: 30),),
-          content: Text(phoneNumber,style: const TextStyle(fontSize: 20),),
+          title: const Text("Phone Number", style: TextStyle(fontSize: 30),),
+          content: Text(phoneNumber, style: const TextStyle(fontSize: 20),),
           actions: [
             TextButton(
-              child: const Text("Call",style: TextStyle(fontSize:20),),
+              child: const Text("Call", style: TextStyle(fontSize: 20),),
               onPressed: () async {
                 final Uri launchUri = Uri(
                   scheme: 'tel',
@@ -285,7 +291,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             TextButton(
-              child: const Text("Close",style: TextStyle(fontSize:20),),
+              child: const Text("Close", style: TextStyle(fontSize: 20),),
               onPressed: () {
                 Navigator.of(context).pop();
               },

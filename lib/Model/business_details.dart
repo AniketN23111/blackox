@@ -15,6 +15,7 @@ class BusinessDetails {
   final DateTime startDate;
   final DateTime endDate;
   final DateTime registerDate;
+  final String imageUrl;
 
   BusinessDetails({
     required this.uName,
@@ -33,5 +34,6 @@ class BusinessDetails {
     required this.startDate,
     required this.endDate,
     required this.registerDate,
+    required this.imageUrl,
   });
 }

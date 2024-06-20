@@ -58,22 +58,33 @@ class _SelectionScreenState extends State<SelectionScreen> {
     _fetchCategories();
     _loadCloudApi();
     _requestPermissions();
+    _fetchCategories();
   }
 
   bool isStored = false;
   bool isLoading = false;
+  bool isLoadingSubCategory = false;
   final DatabaseService databaseService = DatabaseService();
   List<CategoryType> _categories = [];
   Map<String, Color> _categoryColors = {};
+  Map<String, bool> _loadingState = {};
   Future<void> _fetchCategories() async {
-    final categories = await databaseService.getCategoryType();
-    setState(() {
-      _categories = categories;
-      _categoryColors = {
-        for (var category in categories)
-          category.categoryName: Color(int.parse(category.color, radix: 16)),
-      };
-    });
+    try {
+      final categories = await databaseService.getCategoryType();
+      setState(() {
+        _categories = categories;
+        isLoadingSubCategory = false;
+        _categoryColors = {
+          for (var category in categories)
+            category.categoryName: Color(int.parse(category.color, radix: 16)),
+        };
+      });
+    } catch (e) {
+      print('Error fetching categories: $e');
+      setState(() {
+        isLoadingSubCategory = false;
+      });
+    }
   }
 
   void _resetSteps(String occupation) {
@@ -367,20 +378,19 @@ class _SelectionScreenState extends State<SelectionScreen> {
       steps.add(
         Step(
           title: const Text('3'),
-          content: Column(
+          content: isLoadingSubCategory
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
             children: [
-              Text(
-                AppLocalizations.of(context).translate('sub_category'),
-                style:
-                    const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              const Text(
+                'Sub Category',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: ScreenUtility.screenHeight * 0.02),
-              _buildSubCategoryButton('Machine rent'),
-              SizedBox(height: ScreenUtility.screenHeight * 0.02),
-              _buildSubCategoryButton('Labour'),
-              SizedBox(height: ScreenUtility.screenHeight * 0.02),
-              _buildSubCategoryButton('Advisor'),
-              SizedBox(height: ScreenUtility.screenHeight * 0.03),
+              const SizedBox(height: 20),
+              ..._categories.map((category) {
+                return _buildSubCategoryButton(category.categoryName);
+              }).toList(),
+              const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
                   // Handle Add More action
@@ -388,16 +398,16 @@ class _SelectionScreenState extends State<SelectionScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   minimumSize: Size(
-                      ScreenUtility.screenWidth * 0.8,
-                      ScreenUtility.screenHeight *
-                          0.05), // Increase button size
+                    MediaQuery.of(context).size.width * 0.8,
+                    MediaQuery.of(context).size.height * 0.05,
+                  ), // Increase button size
                 ),
-                child: Text(
-                  AppLocalizations.of(context).translate('add_more'),
-                  style: const TextStyle(color: Colors.white, fontSize: 24),
+                child: const Text(
+                  'Add More',
+                  style: TextStyle(color: Colors.white, fontSize: 24),
                 ),
               ),
-              SizedBox(height: ScreenUtility.screenHeight * 0.03),
+              const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/authenticationScreen');
@@ -405,22 +415,23 @@ class _SelectionScreenState extends State<SelectionScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   minimumSize: Size(
-                      ScreenUtility.screenWidth * 0.8,
-                      ScreenUtility.screenHeight *
-                          0.05), // Increase button size
+                    MediaQuery.of(context).size.width * 0.8,
+                    MediaQuery.of(context).size.height * 0.05,
+                  ), // Increase button size
                 ),
-                child: Text(
-                  AppLocalizations.of(context).translate('continue'),
-                  style: const TextStyle(color: Colors.white, fontSize: 24),
+                child: const Text(
+                  'Continue',
+                  style: TextStyle(color: Colors.white, fontSize: 24),
                 ),
               ),
             ],
           ),
-          isActive: _currentStep == 2,
-          state: _currentStep == 2 ? StepState.editing : StepState.complete,
+          isActive: true,
+          state: StepState.editing,
         ),
       );
     }
+
     return steps;
   }
 
@@ -476,62 +487,81 @@ class _SelectionScreenState extends State<SelectionScreen> {
 
   Widget _buildSubCategoryButton(String subCategory) {
     final bool isSelected = _selectedSubCategories.contains(subCategory);
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          if (isSelected) {
-            _selectedSubCategories.remove(subCategory);
-          } else {
-            _selectedSubCategories.add(subCategory);
-          }
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.grey : Colors.grey,
-        minimumSize: Size(
-            ScreenUtility.screenWidth * 0.8, ScreenUtility.screenHeight * 0.05),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 40,
-            height: 20,
-            child: Stack(
-              children: [
-                Positioned(
-                  child: Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      shape: BoxShape.circle,
-                      color: isSelected ? Colors.green : Colors.transparent,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 5,
-                  left: 5,
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+    final bool isLoading = _loadingState[subCategory] ?? false;
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        onPressed: () async {
+          setState(() {
+            _loadingState[subCategory] = true;
+          });
+
+          await Future.delayed(const Duration(seconds: 1)); // Simulate a delay for the loading state
+
+          setState(() {
+            if (isSelected) {
+              _selectedSubCategories.remove(subCategory);
+            } else {
+              _selectedSubCategories.add(subCategory);
+            }
+            _loadingState[subCategory] = false;
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isSelected ? Colors.grey : Colors.grey,
+          minimumSize: Size(
+            MediaQuery.of(context).size.width * 0.8,
+            MediaQuery.of(context).size.height * 0.05,
           ),
-          SizedBox(width: ScreenUtility.screenHeight * 0.01),
-          Text(subCategory,
-              style: const TextStyle(color: Colors.black, fontSize: 24)),
-        ],
+        ),
+        child: isLoading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 40,
+              height: 20,
+              child: Stack(
+                children: [
+                  Positioned(
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        shape: BoxShape.circle,
+                        color: isSelected ? Colors.green : Colors.transparent,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 5,
+                    left: 5,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: MediaQuery.of(context).size.height * 0.01),
+            Text(
+              subCategory,
+              style: const TextStyle(color: Colors.black, fontSize: 24),
+            ),
+          ],
+        ),
       ),
     );
   }
+
 
   Widget _buildPersonalDetailForm() {
     final formkey = GlobalKey<FormState>();
@@ -1006,7 +1036,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
           ),
           const SizedBox(height: 20),
           SizedBox(
-            height: ScreenUtility.screenHeight * 0.4,
+            height: ScreenUtility.screenHeight * 0.1,
             width: ScreenUtility.screenWidth * 0.8,
             child: _downloadUrl != null
                 ? Padding(
