@@ -1,7 +1,5 @@
-
+import 'package:blackox/Navigator/NavigatorAccountPage/account_page.dart';
 import 'package:flutter/material.dart';
-
-import '../NavigatorAccountPage/account_page.dart';
 
 class AccountPageNavigator extends StatelessWidget {
   const AccountPageNavigator({super.key});

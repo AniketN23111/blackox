@@ -1,9 +1,9 @@
 import 'package:blackox/Model/business_details.dart';
 import 'package:blackox/Model/category_type.dart';
+import 'package:blackox/Services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../Services/database_services.dart';
 class BusinessDetailsShops extends StatefulWidget {
   const BusinessDetailsShops({super.key});
 

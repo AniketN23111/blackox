@@ -1,5 +1,5 @@
-import 'package:blackox/NavigatorNotification/notification_page.dart';
 import 'package:flutter/material.dart';
+import '../Navigator/NavigatorNotification/notification_page.dart';
 
 class NotificationPageNavigator extends StatelessWidget {
   const NotificationPageNavigator({super.key});

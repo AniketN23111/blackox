@@ -1,5 +1,5 @@
-import 'package:blackox/NavigatorCategories/categories_page.dart';
 import 'package:flutter/material.dart';
+import '../Navigator/NavigatorCategories/categories_page.dart';
 
 class CategoriesPageNavigator extends StatelessWidget {
   const CategoriesPageNavigator({super.key});

@@ -1,5 +1,6 @@
-import 'package:blackox/NavigatorAddPage/add_page.dart';
 import 'package:flutter/material.dart';
+
+import '../Navigator/NavigatorAddPage/add_page.dart';
 
 class AddPageNavigator extends StatelessWidget {
   const AddPageNavigator({super.key});
