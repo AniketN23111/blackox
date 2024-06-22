@@ -1,17 +1,17 @@
-import 'package:flutter/material.dart';
 import 'package:blackox/Model/business_details.dart';
 import 'package:blackox/Model/category_type.dart';
-import 'package:blackox/Services/database_services.dart'; // Assuming DatabaseService is imported correctly
+import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+import '../Services/database_services.dart';
+class BusinessDetailsShops extends StatefulWidget {
+  const BusinessDetailsShops({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<BusinessDetailsShops> createState() => _BusinessDetailsShopsState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _BusinessDetailsShopsState extends State<BusinessDetailsShops> {
   final DatabaseService databaseService = DatabaseService();
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
@@ -45,54 +45,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: TextField(
-          controller: _searchController,
-          decoration: InputDecoration(
-            hintText: 'Search...',
-            hintStyle: const TextStyle(fontSize: 22),
-            border: InputBorder.none,
-            prefixIcon: IconButton(
-              onPressed: () {
-                // Handle Search Button press
-              },
-              icon: const Icon(Icons.search, size: 30),
-            ),
-            suffixIcon: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.mic),
-                  onPressed: () {
-                    // Handle microphone button press
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.camera_alt),
-                  onPressed: () {
-                    // Handle camera button press
-                  },
-                ),
-              ],
-            ),
-          ),
-          onChanged: (query) {
-            setState(() {
-              _searchQuery = query;
-            });
-          },
-        ),
-        backgroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () {
-              _showCategoryFilterDialog(context);
-            },
-          ),
-        ],
-      ),
       body: Column(
         children: [
           if (_selectedCategory != null)

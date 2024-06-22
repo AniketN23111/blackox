@@ -1,4 +1,9 @@
+import 'package:blackox/HomeScreen/account_page_navigator.dart';
+import 'package:blackox/HomeScreen/add_page_navigator.dart';
+import 'package:blackox/HomeScreen/categories_page_navigator.dart';
+import 'package:blackox/HomeScreen/notification_page_navigator.dart';
 import 'package:flutter/material.dart';
+import 'package:blackox/Constants/screen_utility.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -6,12 +11,7 @@ import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
-import 'package:blackox/Constants/screen_utility.dart';
-import 'package:blackox/HomeScreen/account_page.dart';
-import 'package:blackox/HomeScreen/add_page.dart';
-import 'package:blackox/HomeScreen/categories_page.dart';
-import 'package:blackox/HomeScreen/notification_page.dart';
-import 'package:blackox/HomeScreen/home_page.dart';
+import 'home_page_navigator.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,19 +34,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    const HomePage(),
-    const CategoriesPage(),
-    const AddPage(),
-    const NotificationPage(),
-    const AccountPage(),
+    const HomeNavigator(),
+    const CategoriesPageNavigator(),
+    const AddPageNavigator(),
+    const NotificationPageNavigator(),
+    const AccountPageNavigator(),
   ];
 
   @override
   void initState() {
     super.initState();
     _updateTime();
-    _timer =
-        Timer.periodic(const Duration(seconds: 60), (Timer t) => _updateTime());
+    _timer = Timer.periodic(const Duration(seconds: 60), (Timer t) => _updateTime());
     _checkLocationPermission();
   }
 
@@ -198,32 +197,31 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (_weatherLocation != null &&
                     _weatherCondition != null &&
                     _weatherTemperature != null)
-                Text(
-                  '$_weatherTemperature°C',
-                  style: const TextStyle(fontSize: 26),
-                ),
-                  Row(
-                    children: [
-                      Text(
-                        _currentDate,
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                       SizedBox(width: ScreenUtility.screenWidth * 0.01),
-                      Image.asset('assets/Icon/My Location.png'),
-                       SizedBox(width:  ScreenUtility.screenWidth * 0.01),
-                      Text(
-                        '$_weatherLocation',
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ],
+                  Text(
+                    '$_weatherTemperature°C',
+                    style: const TextStyle(fontSize: 26),
                   ),
+                Row(
+                  children: [
+                    Text(
+                      _currentDate,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    SizedBox(width: ScreenUtility.screenWidth * 0.01),
+                    Image.asset('assets/Icon/My Location.png'),
+                    SizedBox(width: ScreenUtility.screenWidth * 0.01),
+                    Text(
+                      '$_weatherLocation',
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
               ],
             ),
           ],
         ),
         backgroundColor: Colors.white,
-        automaticallyImplyLeading:
-        false, // This removes the back button
+        automaticallyImplyLeading: false, // This removes the back button
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -268,35 +266,39 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: IndexedStack(
         index: _selectedIndex,
-        children: _widgetOptions,
+        children: _widgetOptions.map((widget) => widget ?? Container()).toList(),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Categories',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle, size: 40),
-            label: 'Add',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Account',
-          ),
+      bottomNavigationBar: Container(
+        color: Colors.white,
+        padding: EdgeInsets.symmetric(vertical: 10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            _buildNavBarItem(Icons.home, 'Home', 0),
+            _buildNavBarItem(Icons.list, 'Categories', 1),
+            _buildNavBarItem(Icons.add_circle, 'Add', 2),
+            _buildNavBarItem(Icons.notifications, 'Notifications', 3),
+            _buildNavBarItem(Icons.account_circle, 'Account', 4),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavBarItem(IconData icon, String label, int index) {
+    return InkWell(
+      onTap: () {
+        _onItemTapped(index);
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.amber[800]),
+          Text(label,
+              style: TextStyle(
+                color: _selectedIndex == index ? Colors.amber[800] : Colors.black,
+              )),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
       ),
     );
   }
