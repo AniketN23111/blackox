@@ -1,3 +1,5 @@
+import 'package:blackox/CropCalculator/crop_calculator.dart';
+import 'package:blackox/Navigator/NavigatorHome/business_details_shops.dart';
 import 'package:flutter/material.dart';
 import 'package:blackox/Constants/screen_utility.dart';
 
@@ -13,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
       ),
       body: Column(
         children: [
@@ -99,9 +101,14 @@ class _HomePageState extends State<HomePage> {
         height: height,
         child: ElevatedButton(
           onPressed: () {
-            // Handle button tap
-            ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text('Button pressed')));
+            if (imagePath == 'assets/Icon/Calculator.png') {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const CropCalculator(),
+              ));
+            } else {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(const SnackBar(content: Text('Button pressed')));
+            }
           },
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.black,
@@ -132,7 +139,9 @@ class _HomePageState extends State<HomePage> {
         child: ElevatedButton(
           onPressed: () {
             if (title == 'Business') {
-              Navigator.pushNamed(context, 'businessDetailsShops');
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const BusinessDetailsShops(),
+              ));
             } else {
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text('$title button pressed')));

@@ -14,7 +14,7 @@ class BusinessDetailsShops extends StatefulWidget {
 class _BusinessDetailsShopsState extends State<BusinessDetailsShops> {
   final DatabaseService databaseService = DatabaseService();
   final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
+  final String _searchQuery = '';
   String? _selectedCategory;
   List<CategoryType> _categories = [];
 
@@ -182,7 +182,7 @@ class _BusinessDetailsShopsState extends State<BusinessDetailsShops> {
   }
 
   String _getBusinessImageUrl(BusinessDetails businessDetail) {
-    if (businessDetail.imageUrl != null && businessDetail.imageUrl.isNotEmpty && businessDetail.imageUrl != 'DEFAULT') {
+    if (businessDetail.imageUrl.isNotEmpty && businessDetail.imageUrl != 'DEFAULT') {
       return businessDetail.imageUrl;
     } else {
       final category = _categories.firstWhere(

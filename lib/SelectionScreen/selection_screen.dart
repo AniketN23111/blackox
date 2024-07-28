@@ -57,7 +57,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
     super.initState();
     _fetchCategories();
     _loadCloudApi();
-    _requestPermissions();
     _fetchCategories();
   }
 
@@ -117,6 +116,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
     }
   }
   Future<void> _pickAndUploadImage() async {
+    _requestPermissions();
     setState(() {
       _uploading = true; // Start uploading, show progress indicator
     });
@@ -1102,7 +1102,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
         Endpoint(
           host: '34.71.87.187',
           port: 5432,
-          database: 'airegulation_dev',
+          database: 'datagovernance',
           username: 'postgres',
           password: 'India@5555',
         ),
@@ -1110,7 +1110,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
       );
 
       connection.execute(
-        'INSERT INTO ai.business_details (u_name,u_number,u_email,b_name,b_address,b_pincode,b_city,gstno,category_type,product_name,rate,rate_per,discount_rate,start_date,end_date,register_date,image_url) '
+        'INSERT INTO public.business_details (u_name,u_number,u_email,b_name,b_address,b_pincode,b_city,gstno,category_type,product_name,rate,rate_per,discount_rate,start_date,end_date,register_date,image_url) '
         'VALUES (\$1, \$2, \$3, \$4,\$5, \$6, \$7, \$8,\$9, \$10, \$11, \$12,\$13, \$14, \$15, \$16, \$17)',
         parameters: [
           uName,

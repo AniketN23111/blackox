@@ -1,3 +1,4 @@
+import 'package:blackox/HomeScreen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 
@@ -5,7 +6,6 @@ import 'package:blackox/Authentication%20Screen/login_screen.dart';
 import 'package:blackox/Authentication%20Screen/signup_screen.dart';
 import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/Authentication%20Screen/authentication_screen.dart';
-import 'package:blackox/HomeScreen/home_screen.dart';
 import 'package:blackox/SelectionScreen/let_started_screen.dart';
 import 'package:blackox/SelectionScreen/selection_screen.dart';
 import 'package:blackox/i18n/app_localization.dart';
@@ -18,7 +18,7 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+   const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -84,7 +84,7 @@ class _MyAppState extends State<MyApp> {
       onGenerateRoute: (settings) {
         // Handle dynamic route generation if needed
         return MaterialPageRoute(
-          builder: (context) => Scaffold(
+          builder: (context) => const Scaffold(
             body: Center(
               child: Text('Route not found!'),
             ),

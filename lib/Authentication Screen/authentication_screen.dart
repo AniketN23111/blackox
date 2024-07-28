@@ -37,7 +37,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/LoginScreen');
+                    Navigator.pushNamed(context, '/loginScreen');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,

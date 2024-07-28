@@ -210,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Endpoint(
           host: '34.71.87.187',
           port: 5432,
-          database: 'airegulation_dev',
+          database: 'datagovernance',
           username: 'postgres',
           password: 'India@5555',
         ),
@@ -218,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       final result = await connection.execute(
-        'SELECT * FROM ai.black_ox_user WHERE email = \$1 AND password = \$2',
+        'SELECT * FROM public.black_ox_user WHERE email = \$1 AND password = \$2',
         parameters: [email, password],
       );
 
@@ -237,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Endpoint(
           host: '34.71.87.187',
           port: 5432,
-          database: 'airegulation_dev',
+          database: 'datagovernance',
           username: 'postgres',
           password: 'India@5555',
         ),
@@ -245,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       final result = await connection.execute(
-        'SELECT * FROM ai.black_ox_user WHERE email = \$1',
+        'SELECT * FROM public.black_ox_user WHERE email = \$1',
         parameters: [email],
       );
 

@@ -1,17 +1,16 @@
-import 'package:blackox/HomeScreen/account_page_navigator.dart';
-import 'package:blackox/HomeScreen/add_page_navigator.dart';
-import 'package:blackox/HomeScreen/categories_page_navigator.dart';
-import 'package:blackox/HomeScreen/notification_page_navigator.dart';
-import 'package:flutter/material.dart';
 import 'package:blackox/Constants/screen_utility.dart';
-import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:blackox/Navigator/NavigatorAccountPage/account_page.dart';
+import 'package:blackox/Navigator/NavigatorAddPage/add_page.dart';
+import 'package:blackox/Navigator/NavigatorCategories/categories_page.dart';
+import 'package:blackox/Navigator/NavigatorHome/home_page.dart';
+import 'package:blackox/Navigator/NavigatorNotification/notification_page.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
-
-import 'home_page_navigator.dart';
+import 'dart:async';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,12 +32,22 @@ class _HomeScreenState extends State<HomeScreen> {
   // Location variables
   Position? _currentPosition;
 
-  static final List<Widget> _widgetOptions = <Widget>[
-    const HomeNavigator(),
-    const CategoriesPageNavigator(),
-    const AddPageNavigator(),
-    const NotificationPageNavigator(),
-    const AccountPageNavigator(),
+  // Navigator keys for each tab
+  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+  ];
+
+  // Pages for each tab
+  final List<Widget> _pages = [
+    const HomePage(),
+    const CategoriesPage(),
+    const AddPage(),
+    const NotificationPage(),
+    const AccountPage(),
   ];
 
   @override
@@ -147,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _updateTime() {
     final now = DateTime.now();
-    final formattedDate = DateFormat('MMM d, yyyy').format(now); // Date format
+    final formattedDate = DateFormat('MMM d').format(now); // Date format
     setState(() {
       _currentDate = formattedDate;
     });
@@ -206,13 +215,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       _currentDate,
                       style: const TextStyle(fontSize: 20),
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(width: ScreenUtility.screenWidth * 0.01),
                     Image.asset('assets/Icon/My Location.png'),
                     SizedBox(width: ScreenUtility.screenWidth * 0.01),
                     Text(
                       '$_weatherLocation',
-                      style: const TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 18),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -266,39 +277,44 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: IndexedStack(
         index: _selectedIndex,
-        children: _widgetOptions.map((widget) => widget ?? Container()).toList(),
+        children: List.generate(_pages.length, (index) {
+          return Navigator(
+            key: _navigatorKeys[index],
+            onGenerateRoute: (routeSettings) {
+              return MaterialPageRoute(
+                builder: (context) => _pages[index],
+              );
+            },
+          );
+        }),
       ),
-      bottomNavigationBar: Container(
-        color: Colors.white,
-        padding: EdgeInsets.symmetric(vertical: 10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            _buildNavBarItem(Icons.home, 'Home', 0),
-            _buildNavBarItem(Icons.list, 'Categories', 1),
-            _buildNavBarItem(Icons.add_circle, 'Add', 2),
-            _buildNavBarItem(Icons.notifications, 'Notifications', 3),
-            _buildNavBarItem(Icons.account_circle, 'Account', 4),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavBarItem(IconData icon, String label, int index) {
-    return InkWell(
-      onTap: () {
-        _onItemTapped(index);
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: Colors.amber[800]),
-          Text(label,
-              style: TextStyle(
-                color: _selectedIndex == index ? Colors.amber[800] : Colors.black,
-              )),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.category),
+            label: 'Categories',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: 'Add',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Account',
+          ),
         ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.orange,
+        onTap: _onItemTapped,
       ),
     );
   }

@@ -7,7 +7,7 @@ class DatabaseService {
     Endpoint(
       host: '34.71.87.187',
       port: 5432,
-      database: 'airegulation_dev',
+      database: 'datagovernance',
       username: 'postgres',
       password: 'India@5555',
     ),
@@ -20,7 +20,7 @@ class DatabaseService {
         Endpoint(
           host: '34.71.87.187',
           port: 5432,
-          database: 'airegulation_dev',
+          database: 'datagovernance',
           username: 'postgres',
           password: 'India@5555',
         ),
@@ -28,7 +28,7 @@ class DatabaseService {
       );
 
       final results = await connection.execute(
-        'SELECT * FROM ai.business_details',
+        'SELECT * FROM public.business_details',
       );
 
       await connection.close();
@@ -68,7 +68,7 @@ class DatabaseService {
         Endpoint(
           host: '34.71.87.187',
           port: 5432,
-          database: 'airegulation_dev',
+          database: 'datagovernance',
           username: 'postgres',
           password: 'India@5555',
         ),
@@ -76,7 +76,7 @@ class DatabaseService {
       );
 
       final results = await connection.execute(
-        'SELECT * FROM ai.category_master',
+        'SELECT * FROM public.category_master',
       );
 
       await connection.close();

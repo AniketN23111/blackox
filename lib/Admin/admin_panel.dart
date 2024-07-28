@@ -236,14 +236,14 @@ class _AdminPanelState extends State<AdminPanel> {
         Endpoint(
           host: '34.71.87.187',
           port: 5432,
-          database: 'airegulation_dev',
+          database: 'datagovernance',
           username: 'postgres',
           password: 'India@5555',
         ),
         settings: const ConnectionSettings(sslMode: SslMode.disable),
       );
       connection.execute(
-        'INSERT INTO ai.category_master (category_name, image_icon, color) '
+        'INSERT INTO public.category_master (category_name, image_icon, color) '
             'VALUES (\$1, \$2, \$3)',
         parameters: [categoryType,imageUri,color],
       );
