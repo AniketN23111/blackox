@@ -168,6 +168,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<bool> _onWillPop() async {
+    final isFirstRouteInCurrentTab =
+    !await _navigatorKeys[_selectedIndex].currentState!.maybePop();
+
+    if (isFirstRouteInCurrentTab) {
+      // If not on the first route, navigate back to the home page
+      if (_selectedIndex != 0) {
+        setState(() {
+          _selectedIndex = 0;
+        });
+        return false;
+      }
+      // If on the first route of the home tab, allow app to close
+    }
+    return isFirstRouteInCurrentTab;
+  }
+
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -190,131 +207,134 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Image.asset(
-              "assets/Images/BlackOxLogo.png",
-              height: ScreenUtility.screenHeight * 0.07,
-              fit: BoxFit.contain,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                if (_weatherLocation != null &&
-                    _weatherCondition != null &&
-                    _weatherTemperature != null)
-                  Text(
-                    '$_weatherTemperature°C',
-                    style: const TextStyle(fontSize: 26),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Image.asset(
+                "assets/Images/BlackOxLogo.png",
+                height: ScreenUtility.screenHeight * 0.07,
+                fit: BoxFit.contain,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (_weatherLocation != null &&
+                      _weatherCondition != null &&
+                      _weatherTemperature != null)
+                    Text(
+                      '$_weatherTemperature°C',
+                      style: const TextStyle(fontSize: 26),
+                    ),
+                  Row(
+                    children: [
+                      Text(
+                        _currentDate,
+                        style: const TextStyle(fontSize: 20),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(width: ScreenUtility.screenWidth * 0.01),
+                      Image.asset('assets/Icon/My Location.png'),
+                      SizedBox(width: ScreenUtility.screenWidth * 0.01),
+                      Text(
+                        '$_weatherLocation',
+                        style: const TextStyle(fontSize: 18),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-                Row(
-                  children: [
-                    Text(
-                      _currentDate,
-                      style: const TextStyle(fontSize: 20),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(width: ScreenUtility.screenWidth * 0.01),
-                    Image.asset('assets/Icon/My Location.png'),
-                    SizedBox(width: ScreenUtility.screenWidth * 0.01),
-                    Text(
-                      '$_weatherLocation',
-                      style: const TextStyle(fontSize: 18),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false, // This removes the back button
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
-        ),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: const <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.orange,
+                ],
               ),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.message),
-              title: Text('Messages'),
-            ),
-            ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text('Profile'),
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-            ),
-          ],
-        ),
-      ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: List.generate(_pages.length, (index) {
-          return Navigator(
-            key: _navigatorKeys[index],
-            onGenerateRoute: (routeSettings) {
-              return MaterialPageRoute(
-                builder: (context) => _pages[index],
+            ],
+          ),
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false, // This removes the back button
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
               );
             },
-          );
-        }),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: 'Categories',
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: const <Widget>[
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                ),
+                child: Text(
+                  'Drawer Header',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.message),
+                title: Text('Messages'),
+              ),
+              ListTile(
+                leading: Icon(Icons.account_circle),
+                title: Text('Profile'),
+              ),
+              ListTile(
+                leading: Icon(Icons.settings),
+                title: Text('Settings'),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Add',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Account',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.orange,
-        onTap: _onItemTapped,
+        ),
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: List.generate(_navigatorKeys.length, (index) {
+            return Navigator(
+              key: _navigatorKeys[index],
+              onGenerateRoute: (routeSettings) {
+                return MaterialPageRoute(
+                  builder: (context) => _pages[index],
+                );
+              },
+            );
+          }),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.category),
+              label: 'Categories',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add),
+              label: 'Add',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.notifications),
+              label: 'Notifications',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+              label: 'Account',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.orange,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }

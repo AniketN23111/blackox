@@ -91,16 +91,6 @@ class _MyAppState extends State<MyApp> {
           ),
         );
       },
-      // Set onUnknownRoute if you want to handle unknown routes differently
-      // onUnknownRoute: (settings) {
-      //   return MaterialPageRoute(
-      //     builder: (context) => Scaffold(
-      //       body: Center(
-      //         child: Text('Unknown route!'),
-      //       ),
-      //     ),
-      //   );
-      // },
     );
   }
 
@@ -114,14 +104,11 @@ class _MyAppState extends State<MyApp> {
       navigatorKey.currentState?.pushReplacementNamed('/home');
       return true; // Return true to stop the default back button action
     }
-
-    // Return false to continue with the default back button action
     return false;
   }
 
   @override
   void dispose() {
-    // Remove the interceptor when the app is disposed
     BackButtonInterceptor.remove(myInterceptor);
     super.dispose();
   }
