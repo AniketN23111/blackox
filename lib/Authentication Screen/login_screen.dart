@@ -35,11 +35,11 @@ class _LoginScreenState extends State<LoginScreen> {
         // Directly check for admin credentials
         if (enteredEmail == 'admin@gmail.com' && enteredPassword == 'admin123@') {
           await _storeDetailsInPrefs();
-          Navigator.pushReplacement(
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const AdminPanel()),
+                (Route<dynamic> route) => false, // Remove all routes
           );
-          _isLoggingIn = false;
           return; // Exit function early if admin credentials match
         }
 
@@ -50,10 +50,11 @@ class _LoginScreenState extends State<LoginScreen> {
           // Fetch user data after successful login
           userData = await fetchUserData(enteredEmail);
           await _storeDetailsInPrefs();
-          // Navigate to the page where the user can choose a Device
-          Navigator.pushReplacement(
+          // Navigate to the HomeScreen and clear the stack
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),
+                (Route<dynamic> route) => false, // Remove all routes
           );
         } else {
           // Show error message for invalid credentials

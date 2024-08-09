@@ -36,4 +36,26 @@ class BusinessDetails {
     required this.registerDate,
     required this.imageUrl,
   });
+
+  factory BusinessDetails.fromJson(Map<String, dynamic> json) {
+    return BusinessDetails(
+      uName: json['uName'],
+      uNumber: json['uNumber'],
+      uEmail: json['uEmail'],
+      bName: json['bName'],
+      bAddress: json['bAddress'],
+      bPinCode: json['bPinCode'],
+      bCity: json['bCity'],
+      gstNO: json['gstNO'],
+      categoryType: json['categoryType'],
+      productName: json['productName'],
+      rate: json['rate'],
+      ratePer: json['ratePer'],
+      discountRate: json['discountRate'],
+      startDate: DateTime.parse(json['startDate']),
+      endDate: DateTime.parse(json['endDate']),
+      registerDate: DateTime.parse(json['registerDate']),
+      imageUrl: json['imageUrl'],
+    );
+  }
 }

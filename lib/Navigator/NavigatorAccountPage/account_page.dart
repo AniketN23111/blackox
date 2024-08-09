@@ -1,4 +1,4 @@
-import 'package:blackox/Authentication%20Screen/authentication_screen.dart';
+import 'package:blackox/Authentication%20Screen/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,8 +13,8 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   String _email = '';
   String _password = '';
-  String _mobile='';
-  String _name='';
+  String _mobile = '';
+  String _name = '';
 
   @override
   void initState() {
@@ -50,7 +50,8 @@ class _AccountPageState extends State<AccountPage> {
         ),
       ),
     );
-}
+  }
+
   Future<List<List<dynamic>>> fetchUserData(String email) async {
     try {
       final connection = await Connection.open(
@@ -70,7 +71,7 @@ class _AccountPageState extends State<AccountPage> {
       );
 
       await connection.close();
-      if(result.isNotEmpty) {
+      if (result.isNotEmpty) {
         setState(() {
           _name = result[0][0] as String;
           _mobile = result[0][3] as String;
@@ -82,15 +83,12 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  void logout() async{
+  void logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
-    Navigator.push(
-      // ignore: use_build_context_synchronously
-      context,
-      MaterialPageRoute(
-        builder: (context) => const AuthenticationScreen(),
-      ),
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+      (Route<dynamic> route) => false, // Remove all routes
     );
   }
 }

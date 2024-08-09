@@ -32,14 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
   // Location variables
   Position? _currentPosition;
 
-  // Navigator keys for each tab
-  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-  ];
+  // PageController for managing tab views
+  final PageController _pageController = PageController();
 
   // Pages for each tab
   final List<Widget> _pages = [
@@ -49,6 +43,9 @@ class _HomeScreenState extends State<HomeScreen> {
     const NotificationPage(),
     const AccountPage(),
   ];
+
+  // Manage visibility of navigation bar
+  bool _showBottomNavBar = true;
 
   @override
   void initState() {
@@ -61,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _timer.cancel();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -166,23 +164,16 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
+    _pageController.jumpToPage(index);
   }
 
   Future<bool> _onWillPop() async {
-    final isFirstRouteInCurrentTab =
-    !await _navigatorKeys[_selectedIndex].currentState!.maybePop();
-
-    if (isFirstRouteInCurrentTab) {
-      // If not on the first route, navigate back to the home page
-      if (_selectedIndex != 0) {
-        setState(() {
-          _selectedIndex = 0;
-        });
-        return false;
-      }
-      // If on the first route of the home tab, allow app to close
+    if (_selectedIndex == 0) {
+      return true;
+    } else {
+      _onItemTapped(0); // Navigate to the first tab
+      return false;
     }
-    return isFirstRouteInCurrentTab;
   }
 
   void _showErrorDialog(String message) {
@@ -203,6 +194,13 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  void _handleLogout() {
+    // Perform logout logic here
+    setState(() {
+     // _showBottomNavBar = false;
+    });
   }
 
   @override
@@ -266,8 +264,8 @@ class _HomeScreenState extends State<HomeScreen> {
         drawer: Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
-            children: const <Widget>[
-              DrawerHeader(
+            children: <Widget>[
+              const DrawerHeader(
                 decoration: BoxDecoration(
                   color: Colors.orange,
                 ),
@@ -279,35 +277,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              ListTile(
+              const ListTile(
                 leading: Icon(Icons.message),
                 title: Text('Messages'),
               ),
               ListTile(
-                leading: Icon(Icons.account_circle),
-                title: Text('Profile'),
+                leading: const Icon(Icons.account_circle),
+                title: const Text('Profile'),
+                onTap: () {
+                  _onItemTapped(4); // Navigate to Account Page
+                },
               ),
-              ListTile(
+              const ListTile(
                 leading: Icon(Icons.settings),
                 title: Text('Settings'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.exit_to_app),
+                title: const Text('Logout'),
+                onTap: () {
+                  _handleLogout(); // Handle logout
+                },
               ),
             ],
           ),
         ),
         body: IndexedStack(
           index: _selectedIndex,
-          children: List.generate(_navigatorKeys.length, (index) {
-            return Navigator(
-              key: _navigatorKeys[index],
-              onGenerateRoute: (routeSettings) {
-                return MaterialPageRoute(
-                  builder: (context) => _pages[index],
-                );
-              },
-            );
-          }),
+          children: _pages,
         ),
-        bottomNavigationBar: BottomNavigationBar(
+        bottomNavigationBar: _showBottomNavBar
+            ? BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
@@ -334,7 +334,8 @@ class _HomeScreenState extends State<HomeScreen> {
           selectedItemColor: Colors.black,
           unselectedItemColor: Colors.orange,
           onTap: _onItemTapped,
-        ),
+        )
+            : null,
       ),
     );
   }

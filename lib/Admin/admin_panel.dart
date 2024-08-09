@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:blackox/Admin/upload_excel.dart';
 import 'package:blackox/Constants/screen_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -10,7 +11,7 @@ import 'package:blackox/GoogleApi/cloudApi.dart';
 import 'package:postgres/postgres.dart'; // Ensure you have your CloudApi class here
 
 class AdminPanel extends StatefulWidget {
-  const AdminPanel({Key? key}) : super(key: key);
+  const AdminPanel({super.key});
 
   @override
   State<AdminPanel> createState() => _AdminPanelState();
@@ -224,6 +225,10 @@ class _AdminPanelState extends State<AdminPanel> {
                 },
                 child: const Text('Register Category'),
               ),
+              ElevatedButton(onPressed: ()
+              {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const UploadExcel()));
+              }, child: const Text("File Upload"))
             ],
           ),
         ),

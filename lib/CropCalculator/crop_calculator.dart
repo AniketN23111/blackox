@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:intl/intl.dart';
-import 'package:geolocator/geolocator.dart';
 
 class CropCalculator extends StatefulWidget {
   const CropCalculator({super.key});
@@ -12,44 +11,19 @@ class CropCalculator extends StatefulWidget {
 
 class _CropCalculatorState extends State<CropCalculator> {
   bool autoMode = false;
-  TextEditingController _dateController = TextEditingController();
-  String _currentDate = '';
-
-  // Weather variables
-  String? _weatherLocation = 'Nashik';
-  String? _weatherCondition = 'Clear';
-  double? _weatherTemperature = 24.0;
+  String? _selectedMonth;
 
   @override
   void initState() {
     super.initState();
-    _updateTime();
+    // Initialize with the current month if needed
+    _selectedMonth = DateFormat('MMMM').format(DateTime.now());
   }
 
-  void _updateTime() {
-    final now = DateTime.now();
-    final formattedDate = DateFormat('dd MMM yyyy').format(now); // Date format
-    setState(() {
-      _currentDate = formattedDate;
-    });
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      setState(() {
-        _dateController.text = DateFormat('dd MMM yyyy').format(picked);
-      });
-    }
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -58,7 +32,12 @@ class _CropCalculatorState extends State<CropCalculator> {
             children: [
               const Text(
                 'Crop Calculator',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87, backgroundColor: Colors.yellowAccent),
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                  backgroundColor: Colors.yellowAccent,
+                ),
               ),
               const SizedBox(height: 16),
               Row(
@@ -139,29 +118,18 @@ class _CropCalculatorState extends State<CropCalculator> {
                 style: TextStyle(fontSize: 16, color: Colors.black87),
               ),
               DropdownButton<String>(
-                items: <String>['January', 'February', 'March'].map((String value) {
+                value: _selectedMonth,
+                items: DateFormat().dateSymbols.MONTHS.map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
                   );
                 }).toList(),
-                onChanged: (_) {},
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Sowing Date',
-                style: TextStyle(fontSize: 16, color: Colors.black87),
-              ),
-              TextField(
-                controller: _dateController,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: 'Select Sowing Date',
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_today),
-                    onPressed: () => _selectDate(context),
-                  ),
-                ),
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedMonth = newValue!;
+                  });
+                },
               ),
               const SizedBox(height: 16),
               Row(

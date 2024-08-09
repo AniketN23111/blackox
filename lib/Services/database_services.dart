@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:blackox/Model/business_details.dart';
-import 'package:postgres/postgres.dart';
 import 'package:blackox/Model/category_type.dart';
+import 'package:http/http.dart' as http;
+import 'package:postgres/postgres.dart';
 
 class DatabaseService {
   final connection = Connection.open(
@@ -13,8 +16,9 @@ class DatabaseService {
     ),
     settings: const ConnectionSettings(sslMode: SslMode.disable),
   );
+  final String baseUrl = 'http://localhost:3000/api';
 
-  Future<List<BusinessDetails>> getBusinessDetails() async {
+  /*Future<List<BusinessDetails>> getBusinessDetails() async {
     try {
       final connection = await Connection.open(
         Endpoint(
@@ -62,6 +66,7 @@ class DatabaseService {
       return [];
     }
   }
+
   Future<List<CategoryType>> getCategoryType() async {
     try {
       final connection = await Connection.open(
@@ -92,8 +97,39 @@ class DatabaseService {
       }
 
       return categoryTypeList;
+    } catch (e) {
+      return [];
     }
-    catch (e) {
+  }*/
+
+  Future<List<BusinessDetails>> getBusinessDetails() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/businessDetails'));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((json) => BusinessDetails.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load business details');
+      }
+    } catch (e) {
+      print('Error fetching business details: $e');
+      return [];
+    }
+  }
+
+  Future<List<CategoryType>> getCategoryType() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/categoryTypes'));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((json) => CategoryType.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load category types');
+      }
+    } catch (e) {
+      print('Error fetching category types: $e');
       return [];
     }
   }
