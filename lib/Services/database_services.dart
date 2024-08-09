@@ -108,6 +108,7 @@ class DatabaseService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
+        print('Response Data: ${response.body}');
         return data.map((json) => BusinessDetails.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load business details');
@@ -130,6 +131,48 @@ class DatabaseService {
       }
     } catch (e) {
       print('Error fetching category types: $e');
+      return [];
+    }
+  }
+
+  Future<bool> fetchUserCredentials(String email, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
+      );
+
+      if (response.headers['content-type']?.contains('application/json') ??
+          false) {
+        final responseData = jsonDecode(response.body);
+        return response.statusCode == 200 && responseData['success'];
+      } else {
+        print('Unexpected content-type: ${response.headers['content-type']}');
+        print('Response body: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Error fetching credentials: $e');
+      return false;
+    }
+  }
+
+  Future<List<dynamic>> fetchUserData(String email) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'http://localhost:3000/user-data?email=$email'), // Use your server's URL
+      );
+
+      final responseData = jsonDecode(response.body);
+      if (response.statusCode == 200 && responseData['success']) {
+        return responseData['data'];
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
       return [];
     }
   }

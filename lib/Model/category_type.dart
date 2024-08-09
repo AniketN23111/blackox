@@ -11,9 +11,9 @@ class CategoryType {
 
   factory CategoryType.fromJson(Map<String, dynamic> json) {
     return CategoryType(
-      categoryName: json['categoryName'],
+      categoryName: json['category_name'],
       color: json['color'],
-      imageIcon: json['imageIcon'],
+      imageIcon: json['image_icon'],
     );
   }
 }

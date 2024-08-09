@@ -80,7 +80,8 @@ class _BusinessDetailsShopsState extends State<BusinessDetailsShops> {
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('No business details available'));
+                  return const Center(
+                      child: Text('No business details available'));
                 } else {
                   final businessDetailsList = snapshot.data!;
                   final filteredList = businessDetailsList.where((item) {
@@ -96,14 +97,19 @@ class _BusinessDetailsShopsState extends State<BusinessDetailsShops> {
                     itemCount: filteredList.length,
                     itemBuilder: (context, index) {
                       // Fetch color string for category
-                      final categoryColorString = _getCategoryColorString(filteredList[index].categoryType);
-                      final businessDetailImageUrl = _getBusinessImageUrl(filteredList[index]);
+                      final categoryColorString = _getCategoryColorString(
+                          filteredList[index].categoryType);
+                      final businessDetailImageUrl =
+                          _getBusinessImageUrl(filteredList[index]);
 
                       return Container(
-                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: Color(int.tryParse(categoryColorString) ?? 0xFFFFFFFF), // Convert color string to Color object
+                          color: Color(
+                              int.tryParse(categoryColorString) ?? 0xFFFFFFFF),
+                          // Convert color string to Color object
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
@@ -121,26 +127,34 @@ class _BusinessDetailsShopsState extends State<BusinessDetailsShops> {
                               height: 100, // Adjust height as needed
                               decoration: BoxDecoration(
                                 shape: BoxShape.rectangle,
-                                borderRadius: BorderRadius.circular(6), // Adjust if you want rounded corners
+                                borderRadius: BorderRadius.circular(6),
+                                // Adjust if you want rounded corners
                                 image: DecorationImage(
-                                  image: NetworkImage(businessDetailImageUrl), // Use the correct image URL
+                                  image: NetworkImage(businessDetailImageUrl),
+                                  // Use the correct image URL
                                   fit: BoxFit.fill,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 16), // Space between image and text
+                            const SizedBox(width: 16),
+                            // Space between image and text
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     filteredList[index].bName,
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 22),
                                   ),
-                                  const SizedBox(height: 4), // Space between text and rate info
+                                  const SizedBox(height: 4),
+                                  // Space between text and rate info
                                   Text(
                                     '${filteredList[index].ratePer} - ${filteredList[index].rate}₹',
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
                                   ),
                                 ],
                               ),
@@ -148,7 +162,8 @@ class _BusinessDetailsShopsState extends State<BusinessDetailsShops> {
                             IconButton(
                               icon: const Icon(Icons.phone),
                               onPressed: () {
-                                _showPhoneNumber(context, filteredList[index].uNumber);
+                                _showPhoneNumber(
+                                    context, filteredList[index].uNumber);
                               },
                             ),
                           ],
@@ -167,32 +182,36 @@ class _BusinessDetailsShopsState extends State<BusinessDetailsShops> {
 
   String _getCategoryColorString(String categoryType) {
     final category = _categories.firstWhere(
-            (element) => element.categoryName == categoryType,
-        orElse: () => CategoryType(categoryName: categoryType, color: '#000000', imageIcon: '')
-    );
+        (element) => element.categoryName == categoryType,
+        orElse: () => CategoryType(
+            categoryName: categoryType, color: '#000000', imageIcon: ''));
 
     String colorString = category.color;
 
     // Extract hexadecimal color value from Color(0xffa00beb) format
     if (colorString.startsWith('Color(') && colorString.endsWith(')')) {
-      colorString = colorString.substring(6, colorString.length - 1); // Remove 'Color(' and ')'
+      colorString = colorString.substring(
+          6, colorString.length - 1); // Remove 'Color(' and ')'
     }
 
     return colorString;
   }
 
   String _getBusinessImageUrl(BusinessDetails businessDetail) {
-    if (businessDetail.imageUrl.isNotEmpty && businessDetail.imageUrl != 'DEFAULT') {
+    if (businessDetail.imageUrl.isNotEmpty &&
+        businessDetail.imageUrl != 'DEFAULT') {
       return businessDetail.imageUrl;
     } else {
       final category = _categories.firstWhere(
-            (element) => element.categoryName == businessDetail.categoryType,
-        orElse: () => CategoryType(categoryName: businessDetail.categoryType, color: '#000000', imageIcon: ''),
+        (element) => element.categoryName == businessDetail.categoryType,
+        orElse: () => CategoryType(
+            categoryName: businessDetail.categoryType,
+            color: '#000000',
+            imageIcon: ''),
       );
       return category.imageIcon;
     }
   }
-
 
   void _showCategoryFilterDialog(BuildContext context) {
     showDialog(
@@ -228,11 +247,20 @@ class _BusinessDetailsShopsState extends State<BusinessDetailsShops> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Phone Number", style: TextStyle(fontSize: 30),),
-          content: Text(phoneNumber, style: const TextStyle(fontSize: 20),),
+          title: const Text(
+            "Phone Number",
+            style: TextStyle(fontSize: 30),
+          ),
+          content: Text(
+            phoneNumber,
+            style: const TextStyle(fontSize: 20),
+          ),
           actions: [
             TextButton(
-              child: const Text("Call", style: TextStyle(fontSize: 20),),
+              child: const Text(
+                "Call",
+                style: TextStyle(fontSize: 20),
+              ),
               onPressed: () async {
                 final Uri launchUri = Uri(
                   scheme: 'tel',
@@ -243,7 +271,10 @@ class _BusinessDetailsShopsState extends State<BusinessDetailsShops> {
               },
             ),
             TextButton(
-              child: const Text("Close", style: TextStyle(fontSize: 20),),
+              child: const Text(
+                "Close",
+                style: TextStyle(fontSize: 20),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },

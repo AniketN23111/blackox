@@ -295,9 +295,8 @@ app.put('/update/:table/:id', async (req, res) => {
     }
 });
 
-
 // Route to get business details
-app.get('/api/business-details', async (req, res) => {
+app.get('/api/businessDetails', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM public.business_details');
     const rows = result.rows;
@@ -309,7 +308,7 @@ app.get('/api/business-details', async (req, res) => {
 });
 
 // Route to get category types
-app.get('/api/category-types', async (req, res) => {
+app.get('/api/categoryTypes', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM public.category_master');
     const rows = result.rows;
@@ -317,6 +316,49 @@ app.get('/api/category-types', async (req, res) => {
   } catch (error) {
     console.error('Error fetching category types:', error);
     res.status(500).json({ error: 'Failed to fetch category types' });
+  }
+});
+
+// Login route
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Query to check credentials
+    const result = await pool.query(
+      'SELECT * FROM public.black_ox_user WHERE email = $1 AND password = $2',
+      [email, password]
+    );
+
+    if (result.rows.length > 0) {
+      res.status(200).json({ success: true, message: 'Login successful' });
+    } else {
+      res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+  } catch (err) {
+    console.error('Error executing query', err.stack);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+// Fetch user data route
+app.get('/user-data', async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM public.black_ox_user WHERE email = $1',
+      [email]
+    );
+
+    if (result.rows.length > 0) {
+      res.status(200).json({ success: true, data: result.rows });
+    } else {
+      res.status(404).json({ success: false, message: 'User not found' });
+    }
+  } catch (err) {
+    console.error('Error executing query', err.stack);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 // Start server

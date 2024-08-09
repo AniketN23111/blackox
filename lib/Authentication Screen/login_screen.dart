@@ -1,9 +1,9 @@
 import 'package:blackox/Admin/admin_panel.dart';
 import 'package:blackox/Constants/screen_utility.dart';
 import 'package:blackox/HomeScreen/home_screen.dart';
+import 'package:blackox/Services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:postgres/postgres.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,8 +17,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formkey = GlobalKey<FormState>();
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+
   // Variable to hold user data
   List<List<dynamic>>? userData;
+
+  final DatabaseService databaseService = DatabaseService();
 
   // Variable to track login state
   bool _isLoggingIn = false;
@@ -26,35 +29,39 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _login() async {
     if (_formkey.currentState!.validate()) {
       setState(() {
-        _isLoggingIn = true; // Set login state to true when login process starts
+        _isLoggingIn =
+            true; // Set login state to true when login process starts
       });
       try {
         String enteredEmail = emailController.text.toString();
         String enteredPassword = passwordController.text.toString();
 
         // Directly check for admin credentials
-        if (enteredEmail == 'admin@gmail.com' && enteredPassword == 'admin123@') {
+        if (enteredEmail == 'admin@gmail.com' &&
+            enteredPassword == 'admin123@') {
           await _storeDetailsInPrefs();
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const AdminPanel()),
-                (Route<dynamic> route) => false, // Remove all routes
+            (Route<dynamic> route) => false, // Remove all routes
           );
           return; // Exit function early if admin credentials match
         }
 
         // Check credentials in the database
-        final isValid = await fetchUserCredentials(enteredEmail, enteredPassword);
+        final isValid = await databaseService.fetchUserCredentials(
+            enteredEmail, enteredPassword);
 
         if (isValid) {
           // Fetch user data after successful login
-          userData = await fetchUserData(enteredEmail);
+          userData =
+              (await databaseService.fetchUserData(enteredEmail)).cast<List>();
           await _storeDetailsInPrefs();
           // Navigate to the HomeScreen and clear the stack
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),
-                (Route<dynamic> route) => false, // Remove all routes
+            (Route<dynamic> route) => false, // Remove all routes
           );
         } else {
           // Show error message for invalid credentials
@@ -70,18 +77,18 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } finally {
         setState(() {
-          _isLoggingIn = false; // Reset login state to false when login process completes
+          _isLoggingIn =
+              false; // Reset login state to false when login process completes
         });
       }
     }
   }
 
-
   Future<void> _storeDetailsInPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLoggedIn', true);
     prefs.setString('Email', emailController.text.toString());
-    prefs.setString('Password',passwordController.text.toString());
+    prefs.setString('Password', passwordController.text.toString());
   }
 
   @override
@@ -119,10 +126,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           Icons.email,
                           color: Colors.lightBlue,
                         ),
-                        contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 25.0, horizontal: 10.0),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
-                            borderRadius: BorderRadius.all(Radius.circular(9.0)))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(9.0)))),
                   ),
                 ),
                 Padding(
@@ -148,10 +157,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           Icons.password,
                           color: Colors.lightBlue,
                         ),
-                        contentPadding:  EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 25.0, horizontal: 10.0),
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.red),
-                            borderRadius: BorderRadius.all(Radius.circular(9.0)))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(9.0)))),
                   ),
                 ),
                 SizedBox(height: ScreenUtility.screenHeight * 0.05),
@@ -167,12 +178,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: _isLoggingIn
                         ? const CircularProgressIndicator(
-                      color: Colors.white,
-                    )
+                            color: Colors.white,
+                          )
                         : const Text(
-                      'Log In',
-                      style: TextStyle(color: Colors.white, fontSize: 24),
-                    ),
+                            'Log In',
+                            style: TextStyle(color: Colors.white, fontSize: 24),
+                          ),
                   ),
                 ),
                 SizedBox(height: ScreenUtility.screenHeight * 0.05),
@@ -181,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {},
                       child: const Text(
                         "Sign IN With Google",
-                        style: TextStyle(color: Colors.black,fontSize: 22),
+                        style: TextStyle(color: Colors.black, fontSize: 22),
                       )),
                 ),
                 SizedBox(height: ScreenUtility.screenHeight * 0.03),
@@ -205,7 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<bool> fetchUserCredentials(String email, String password) async {
+  /*Future<bool> fetchUserCredentials(String email, String password) async {
     try {
       final connection = await Connection.open(
         Endpoint(
@@ -224,7 +235,6 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       await connection.close();
-
 
       return result.isNotEmpty;
     } catch (e) {
@@ -256,12 +266,12 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       return [];
     }
-  }
+  }*/
 
   bool _validatePassword(String password) {
     // Regular expression to check if password contains at least one letter, one number, and one special character
     final RegExp regex =
-    RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
+        RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
     return regex.hasMatch(password);
   }
 }
