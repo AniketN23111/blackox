@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:blackox/Model/bom_item.dart';
 import 'package:blackox/Model/business_details.dart';
 import 'package:blackox/Model/category_type.dart';
+import 'package:blackox/Model/crop_details.dart';
 import 'package:http/http.dart' as http;
 import 'package:postgres/postgres.dart';
 
@@ -16,91 +18,7 @@ class DatabaseService {
     ),
     settings: const ConnectionSettings(sslMode: SslMode.disable),
   );
-  final String baseUrl = 'http://localhost:3000/api';
-
-  /*Future<List<BusinessDetails>> getBusinessDetails() async {
-    try {
-      final connection = await Connection.open(
-        Endpoint(
-          host: '34.71.87.187',
-          port: 5432,
-          database: 'datagovernance',
-          username: 'postgres',
-          password: 'India@5555',
-        ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable),
-      );
-
-      final results = await connection.execute(
-        'SELECT * FROM public.business_details',
-      );
-
-      await connection.close();
-
-      List<BusinessDetails> businessDetailsList = [];
-
-      for (var row in results) {
-        businessDetailsList.add(BusinessDetails(
-          uName: row[0] as String,
-          uNumber: row[1] as String,
-          uEmail: row[2] as String,
-          bName: row[3] as String,
-          bAddress: row[4] as String,
-          bPinCode: row[5] as int,
-          bCity: row[6] as String,
-          gstNO: row[7] as String,
-          categoryType: row[8] as String,
-          productName: row[9] as String,
-          rate: row[10] as int,
-          ratePer: row[11] as String,
-          discountRate: row[12] as String,
-          startDate: row[13] as DateTime,
-          endDate: row[14] as DateTime,
-          registerDate: row[15] as DateTime,
-          imageUrl: row[16] as String,
-        ));
-      }
-
-      return businessDetailsList;
-    } catch (e) {
-      return [];
-    }
-  }
-
-  Future<List<CategoryType>> getCategoryType() async {
-    try {
-      final connection = await Connection.open(
-        Endpoint(
-          host: '34.71.87.187',
-          port: 5432,
-          database: 'datagovernance',
-          username: 'postgres',
-          password: 'India@5555',
-        ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable),
-      );
-
-      final results = await connection.execute(
-        'SELECT * FROM public.category_master',
-      );
-
-      await connection.close();
-
-      List<CategoryType> categoryTypeList = [];
-
-      for (var row in results) {
-        categoryTypeList.add(CategoryType(
-          categoryName: row[0] as String,
-          color: row[1] as String,
-          imageIcon: row[2] as String,
-        ));
-      }
-
-      return categoryTypeList;
-    } catch (e) {
-      return [];
-    }
-  }*/
+  final String baseUrl = 'http://localhost:3000/black_ox_api';
 
   Future<List<BusinessDetails>> getBusinessDetails() async {
     try {
@@ -138,7 +56,7 @@ class DatabaseService {
   Future<bool> fetchUserCredentials(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/login'),
+        Uri.parse('$baseUrl/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
       );
@@ -161,8 +79,7 @@ class DatabaseService {
   Future<List<dynamic>> fetchUserData(String email) async {
     try {
       final response = await http.get(
-        Uri.parse(
-            'http://localhost:3000/user-data?email=$email'), // Use your server's URL
+        Uri.parse('$baseUrl/user-data?email=$email'), // Use your server's URL
       );
 
       final responseData = jsonDecode(response.body);
@@ -174,6 +91,32 @@ class DatabaseService {
     } catch (e) {
       print('Error fetching user data: $e');
       return [];
+    }
+  }
+
+  Future<List<BOMItem>> fetchBOMItems(String bomCode, int bomId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/bom/$bomCode/$bomId'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((item) => BOMItem.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load BOM items');
+    }
+  }
+
+  Future<List<CropDetails>> fetchCropItems() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/crop_details'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((item) => CropDetails.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load BOM items');
     }
   }
 }

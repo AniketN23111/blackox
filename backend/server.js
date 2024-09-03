@@ -20,7 +20,7 @@ const pool = new Pool({
 });
 
 //Upload Crop Bill of Material
-app.post('/upload/agri_crop_bill_of_material', upload.single('file'), (req, res) => {
+app.post('/black_ox_api/upload/agri_crop_bill_of_material', upload.single('file'), (req, res) => {
   const file = req.file;
 
   // Parse Excel file
@@ -43,7 +43,7 @@ app.post('/upload/agri_crop_bill_of_material', upload.single('file'), (req, res)
   res.send('File uploaded and data stored in the database.');
 });
 //agri_crop_bill_of_material_detail
-app.post('/upload/agri_crop_bill_of_material_detail', upload.single('file'), (req, res) => {
+app.post('/black_ox_api/upload/agri_crop_bill_of_material_detail', upload.single('file'), (req, res) => {
   const file = req.file;
 
   // Parse Excel file
@@ -66,7 +66,7 @@ app.post('/upload/agri_crop_bill_of_material_detail', upload.single('file'), (re
   res.send('File uploaded and data stored in the database.');
 });
  // Upload agri_data_image
- app.post('/upload/agri_data_image', upload.single('file'), (req, res) => {
+ app.post('/black_ox_api/upload/agri_data_image', upload.single('file'), (req, res) => {
    const file = req.file;
 
    // Parse Excel file
@@ -89,7 +89,7 @@ app.post('/upload/agri_crop_bill_of_material_detail', upload.single('file'), (re
    res.send('File uploaded and data stored in the database.');
  });
 // Upload Season
-app.post('/upload/agri_season', upload.single('file'), (req, res) => {
+app.post('/black_ox_api/upload/agri_season', upload.single('file'), (req, res) => {
   const file = req.file;
 
   // Parse Excel file
@@ -112,7 +112,7 @@ app.post('/upload/agri_season', upload.single('file'), (req, res) => {
   res.send('File uploaded and data stored in the database.');
 });
 //agri_soil_information
-app.post('/upload/agri_soil_information', upload.single('file'), (req, res) => {
+app.post('/black_ox_api/upload/agri_soil_information', upload.single('file'), (req, res) => {
   const file = req.file;
 
   // Parse Excel file
@@ -135,7 +135,7 @@ app.post('/upload/agri_soil_information', upload.single('file'), (req, res) => {
   res.send('File uploaded and data stored in the database.');
 });
 //Upload User Bill of Material
-app.post('/upload/agri_user_bill_of_material', upload.single('file'), (req, res) => {
+app.post('/black_ox_api/upload/agri_user_bill_of_material', upload.single('file'), (req, res) => {
   const file = req.file;
 
   // Parse Excel file
@@ -158,7 +158,7 @@ app.post('/upload/agri_user_bill_of_material', upload.single('file'), (req, res)
   res.send('File uploaded and data stored in the database.');
 });
 //agri_user_bill_of_material_detail
-app.post('/upload/agri_user_bill_of_material_detail', upload.single('file'), (req, res) => {
+app.post('/black_ox_api/upload/agri_user_bill_of_material_detail', upload.single('file'), (req, res) => {
   const file = req.file;
 
   // Parse Excel file
@@ -181,7 +181,7 @@ app.post('/upload/agri_user_bill_of_material_detail', upload.single('file'), (re
   res.send('File uploaded and data stored in the database.');
 });
 // agri_user_soil_information
-app.post('/upload/agri_user_soil_information', upload.single('file'), (req, res) => {
+app.post('/black_ox_api/upload/agri_user_soil_information', upload.single('file'), (req, res) => {
   const file = req.file;
 
   // Parse Excel file
@@ -204,7 +204,7 @@ app.post('/upload/agri_user_soil_information', upload.single('file'), (req, res)
   res.send('File uploaded and data stored in the database.');
 });
 // agri_weather_information
-app.post('/upload/agri_weather_information', upload.single('file'), (req, res) => {
+app.post('/black_ox_api/upload/agri_weather_information', upload.single('file'), (req, res) => {
   const file = req.file;
 
   // Parse Excel file
@@ -227,7 +227,7 @@ app.post('/upload/agri_weather_information', upload.single('file'), (req, res) =
   res.send('File uploaded and data stored in the database.');
 });
 //fetch data
-app.get('/data/:table', async (req, res) => {
+app.get('/black_ox_api/data/:table', async (req, res) => {
   const table = req.params.table;
   try {
     const columns = await pool.query(`SELECT column_name FROM information_schema.columns WHERE table_name = $1`, [table]);
@@ -238,7 +238,7 @@ app.get('/data/:table', async (req, res) => {
   }
 });
 //Update the Data
-app.put('/update/:table/:id', async (req, res) => {
+app.put('/black_ox_api/update/:table/:id', async (req, res) => {
     const table = req.params.table;
     const id = req.params.id;
     const data = req.body;
@@ -296,7 +296,7 @@ app.put('/update/:table/:id', async (req, res) => {
 });
 
 // Route to get business details
-app.get('/api/businessDetails', async (req, res) => {
+app.get('/black_ox_api/businessDetails', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM public.business_details');
     const rows = result.rows;
@@ -308,7 +308,7 @@ app.get('/api/businessDetails', async (req, res) => {
 });
 
 // Route to get category types
-app.get('/api/categoryTypes', async (req, res) => {
+app.get('/black_ox_api/categoryTypes', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM public.category_master');
     const rows = result.rows;
@@ -320,7 +320,7 @@ app.get('/api/categoryTypes', async (req, res) => {
 });
 
 // Login route
-app.post('/login', async (req, res) => {
+app.post('/black_ox_api/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -342,7 +342,7 @@ app.post('/login', async (req, res) => {
 });
 
 // Fetch user data route
-app.get('/user-data', async (req, res) => {
+app.get('/black_ox_api/user-data', async (req, res) => {
   const { email } = req.query;
 
   try {
@@ -361,6 +361,33 @@ app.get('/user-data', async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
+app.get('/black_ox_api/bom/:bomcode/:bomid', async (req, res) => {
+  const { bomcode, bomid } = req.params;
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM agri_crop_bill_of_material_detail WHERE bomcode = $1 AND bomid = $2',
+      [bomcode, bomid]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
+app.get('/black_ox_api/crop_details', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM agri_crop_bill_of_material',
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
