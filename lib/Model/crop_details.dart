@@ -1,21 +1,16 @@
 class CropDetails {
-  final String cropCategory;
   final String cropName;
-  final int bomId;
-  final String bomCode;
+  final String soilcode;
 
   CropDetails({
-    required this.cropCategory,
     required this.cropName,
-    required this.bomId,
-    required this.bomCode,
+    required this.soilcode,
   });
 
   factory CropDetails.fromJson(Map<String, dynamic> json) {
     return CropDetails(
-        cropCategory: json['croptype'],
-        cropName: json['crop'],
-        bomId: int.tryParse(json['bomid']) ?? 0,
-        bomCode: json['bomcode']);
+      cropName: json['cropcultivated'],
+      soilcode: json['soilcode'],
+    );
   }
 }

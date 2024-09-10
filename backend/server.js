@@ -388,6 +388,133 @@ app.get('/black_ox_api/crop_details', async (req, res) => {
   }
 });
 
+// Endpoint to get soil types based on location
+app.post('/black_ox_api/getSoilTypes', async (req, res) => {
+  const { country, state, district, taluka } = req.body;
+
+  try {
+    const query = 'SELECT DISTINCT soiltype FROM public.agri_soil_information WHERE country = $1 AND state = $2 AND district = $3 AND taluka = $4 ';
+
+    const values = [country, state, district, taluka];
+
+    const result = await pool.query(query, values);
+    const soilTypes = result.rows.map(row => row.soiltype);
+
+    res.status(200).json(soilTypes);
+  } catch (error) {
+    console.error('Error fetching soil types:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+// Endpoint to get crop categories based on location and soil type
+app.post('/black_ox_api/getCropCategories', async (req, res) => {
+  const { country, state, district, taluka, soilType } = req.body;
+
+  try {
+    const query = 'SELECT DISTINCT croptype FROM public.agri_soil_information WHERE country = $1 AND state = $2 AND district = $3 AND taluka = $4 AND soiltype = $5';
+
+    const values = [country, state, district, taluka, soilType];
+
+    const result = await pool.query(query, values);
+    const categories = result.rows.map(row => row.croptype);
+
+    res.status(200).json(categories);
+  } catch (error) {
+    console.error('Error fetching crop categories:', error);
+    res.status(500).send('Server error');
+  }
+});
+app.post('/black_ox_api/getCrops', async (req, res) => {
+  const { country, state, district, taluka, soilType, cropCategory } = req.body;
+
+  try {
+    const query = 'SELECT DISTINCT cropcultivated, soilcode FROM public.agri_soil_information WHERE country = $1 AND state = $2 AND district = $3 AND taluka = $4 AND soiltype = $5 AND croptype = $6';
+
+    const values = [country, state, district, taluka, soilType, cropCategory];
+
+    const result = await pool.query(query, values);
+    const crops = result.rows.map(row => row.cropcultivated);
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching crops:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+app.get('/black_ox_api/bom/:soilcode', async (req, res) => {
+  const { soilcode } = req.params;
+
+  try {
+    // Query to fetch bomid and bomcode by soilcode
+    const result = await pool.query(
+      'SELECT bomid, bomcode,crop FROM agri_crop_bill_of_material WHERE soilcode = $1',
+      [soilcode]
+    );
+
+    if (result.rows.length > 0) {
+      res.status(200).json(result.rows[0]); // Return the first matching record
+    } else {
+      res.status(404).json({ error: 'No BOM found for the provided soil code.' });
+    }
+  } catch (error) {
+    console.error('Error fetching BOM details:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Fetch Countries
+app.get('/black_ox_api/countries', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT DISTINCT country FROM public.agri_soil_information');
+    const countries = result.rows.map(row => row.country);
+    res.json(countries);
+  } catch (error) {
+    console.error('Error fetching countries:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Fetch States by Country
+app.get('/black_ox_api/states/:country', async (req, res) => {
+  const country = req.params.country;
+  try {
+    const result = await pool.query('SELECT DISTINCT state FROM public.agri_soil_information WHERE country = $1', [country]);
+    const states = result.rows.map(row => row.state);
+    res.json(states);
+  } catch (error) {
+    console.error('Error fetching states:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Fetch Districts by State
+app.get('/black_ox_api/districts/:state', async (req, res) => {
+  const state = req.params.state;
+  try {
+    const result = await pool.query('SELECT DISTINCT district FROM public.agri_soil_information WHERE state = $1', [state]);
+    const districts = result.rows.map(row => row.district);
+    res.json(districts);
+  } catch (error) {
+    console.error('Error fetching districts:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Fetch Talukas by District
+app.get('/black_ox_api/talukas/:district', async (req, res) => {
+  const district = req.params.district;
+  try {
+    const result = await pool.query('SELECT DISTINCT taluka FROM public.agri_soil_information WHERE district = $1', [district]);
+    const talukas = result.rows.map(row => row.taluka);
+    res.json(talukas);
+  } catch (error) {
+    console.error('Error fetching talukas:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

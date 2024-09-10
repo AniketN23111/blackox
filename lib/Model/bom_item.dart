@@ -2,10 +2,10 @@ class BOMItem {
   final String itemCategory;
   final String itemName;
   final int qty;
-  final int rate;
+  final double rate; // Changed to double to support fractional numbers
   final String uom;
-  final int totalCost;
-  final int subsidy;
+  final double totalCost; // Changed to double to support fractional numbers
+  final double subsidy; // Changed to double to support fractional numbers
 
   BOMItem({
     required this.itemCategory,
@@ -21,11 +21,11 @@ class BOMItem {
     return BOMItem(
       itemCategory: json['item_category'],
       itemName: json['item_name'],
-      qty: int.tryParse(json['quantity']) ?? 0,
-      rate: int.tryParse(json['rate_per_unit']) ?? 0,
+      qty: int.tryParse(json['quantity'].toString()) ?? 0,
+      rate: double.tryParse(json['rate_per_unit'].toString()) ?? 0.0,
       uom: json['uom'],
-      totalCost: int.tryParse(json['total_cost']) ?? 0,
-      subsidy: int.tryParse(json['subsidyamount']) ?? 0,
+      totalCost: double.tryParse(json['total_cost'].toString()) ?? 0.0,
+      subsidy: double.tryParse(json['subsidyamount'].toString()) ?? 0.0,
     );
   }
 }

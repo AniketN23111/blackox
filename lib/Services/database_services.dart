@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:blackox/Model/bom_item.dart';
 import 'package:blackox/Model/business_details.dart';
 import 'package:blackox/Model/category_type.dart';
-import 'package:blackox/Model/crop_details.dart';
 import 'package:http/http.dart' as http;
 import 'package:postgres/postgres.dart';
 
@@ -94,7 +93,7 @@ class DatabaseService {
     }
   }
 
-  Future<List<BOMItem>> fetchBOMItems(String bomCode, int bomId) async {
+  Future<List<BOMItem>> fetchBOMItems(String bomCode, String bomId) async {
     final response = await http.get(
       Uri.parse('$baseUrl/bom/$bomCode/$bomId'),
     );
@@ -107,16 +106,161 @@ class DatabaseService {
     }
   }
 
-  Future<List<CropDetails>> fetchCropItems() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/crop_details'),
+  // Fetch Soil Types based on location
+  Future<List<String>> fetchSoilTypes({
+    required String country,
+    required String state,
+    required String district,
+    required String taluka,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/getSoilTypes'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, String>{
+        'country': country,
+        'state': state,
+        'district': district,
+        'taluka': taluka,
+      }),
     );
 
     if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      return data.map((item) => CropDetails.fromJson(item)).toList();
+      List<dynamic> soilTypes = json.decode(response.body);
+      return soilTypes.map((soilType) => soilType.toString()).toList();
     } else {
-      throw Exception('Failed to load BOM items');
+      throw Exception('Failed to load soil types');
+    }
+  }
+
+  Future<List<String>> fetchCropCategories({
+    required String country,
+    required String state,
+    required String district,
+    required String taluka,
+    required String soilType,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/getCropCategories'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, String>{
+        'country': country,
+        'state': state,
+        'district': district,
+        'taluka': taluka,
+        'soilType': soilType,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> categories = json.decode(response.body);
+      return categories.map((category) => category.toString()).toList();
+    } else {
+      throw Exception('Failed to load crop categories');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchCrops({
+    required String country,
+    required String state,
+    required String district,
+    required String taluka,
+    required String soilType,
+    required String cropCategory,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/getCrops'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, String>{
+        'country': country,
+        'state': state,
+        'district': district,
+        'taluka': taluka,
+        'soilType': soilType,
+        'cropCategory': cropCategory,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> crops = json.decode(response.body);
+      return crops.map((item) => item as Map<String, dynamic>).toList();
+    } else {
+      throw Exception('Failed to load crops');
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchBOMBySoilCode(String soilCode) async {
+    final response = await http.get(Uri.parse('$baseUrl/bom/$soilCode'));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load BOM data');
+    }
+  }
+
+  // Fetch list of countries
+  Future<List<String>> fetchCountries() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/countries'));
+      if (response.statusCode == 200) {
+        List<dynamic> countries = json.decode(response.body);
+        return countries.cast<String>();
+      } else {
+        throw Exception('Failed to load countries');
+      }
+    } catch (error) {
+      throw Exception('Error fetching countries: $error');
+    }
+  }
+
+  // Fetch list of states by country
+  Future<List<String>> fetchStates(String country) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/states/$country'));
+      if (response.statusCode == 200) {
+        List<dynamic> states = json.decode(response.body);
+        return states.cast<String>();
+      } else {
+        throw Exception('Failed to load states');
+      }
+    } catch (error) {
+      throw Exception('Error fetching states: $error');
+    }
+  }
+
+  // Fetch list of districts by state
+  Future<List<String>> fetchDistricts(String state) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/districts/$state'));
+      if (response.statusCode == 200) {
+        List<dynamic> districts = json.decode(response.body);
+        return districts.cast<String>();
+      } else {
+        throw Exception('Failed to load districts');
+      }
+    } catch (error) {
+      throw Exception('Error fetching districts: $error');
+    }
+  }
+
+  // Fetch list of talukas by district
+  Future<List<String>> fetchTalukas(String district) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/talukas/$district'));
+      if (response.statusCode == 200) {
+        List<dynamic> talukas = json.decode(response.body);
+        return talukas.cast<String>();
+      } else {
+        throw Exception('Failed to load talukas');
+      }
+    } catch (error) {
+      throw Exception('Error fetching talukas: $error');
     }
   }
 }
