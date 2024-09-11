@@ -1,3 +1,4 @@
+import 'package:blackox/Authentication%20Screen/authentication_screen.dart';
 import 'package:blackox/Constants/screen_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:blackox/Navigator/NavigatorAccountPage/account_page.dart';
@@ -11,6 +12,8 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -196,8 +199,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _handleLogout() {
+  Future<void> _handleLogout() async {
     // Perform logout logic here
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const AuthenticationScreen()),
+          (Route<dynamic> route) => false, // Remove all routes
+    );
     setState(() {
      // _showBottomNavBar = false;
     });

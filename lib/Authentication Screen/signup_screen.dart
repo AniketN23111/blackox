@@ -1,10 +1,10 @@
 import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/Services/database_services.dart';
 import 'package:blackox/Splash Screen/account_complete.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:postgres/postgres.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -21,6 +21,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController emailOtpController = TextEditingController();
   TextEditingController numberController = TextEditingController();
   EmailOTP myauth = EmailOTP();
+  DatabaseService dbService = DatabaseService();
 
   bool isOtpVerified = false;
   bool isOtpEnabled = false;
@@ -173,7 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         setState(() {
                           isSigningUp = true;
                         });
-                        bool isRegistered = await registerUser(
+                        bool isRegistered = await dbService.registerUser(
                           nameController.text,
                           passwordController.text,
                           emailController.text,
@@ -195,17 +196,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text(
-                                    'Registration failed. Please try again')),
+                                content: Text('Email Already Exist'),
+                                backgroundColor: Colors.redAccent),
                           );
                         }
-                      } else {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content:
-                              Text("Verify OTP and fill all fields correctly."),
-                          backgroundColor: Colors.red,
-                        ));
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -236,17 +230,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       )),
                 ),
                 SizedBox(height: ScreenUtility.screenHeight * 0.03),
-                Row(
-                  children: [
-                    const SizedBox(width: 100),
-                    Image.asset("assets/Icon/FacebookIcon.png"),
-                    const SizedBox(width: 10),
-                    Image.asset("assets/Icon/googleIcon.png"),
-                    const SizedBox(width: 10),
-                    Image.asset("assets/Icon/InstagramIcon.png"),
-                    const SizedBox(width: 10),
-                    Image.asset("assets/Icon/WhatsAppIcon.png"),
-                  ],
+                Center(
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 100),
+                      Image.asset("assets/Icon/FacebookIcon.png"),
+                      const SizedBox(width: 10),
+                      Image.asset("assets/Icon/googleIcon.png"),
+                      const SizedBox(width: 10),
+                      Image.asset("assets/Icon/InstagramIcon.png"),
+                      const SizedBox(width: 10),
+                      Image.asset("assets/Icon/WhatsAppIcon.png"),
+                    ],
+                  ),
                 )
               ],
             ),
@@ -254,64 +250,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
     );
-  }
-
-  Future<bool> registerUser(
-      String name, String password, String email, String number) async {
-    try {
-      final connection = await Connection.open(
-        Endpoint(
-          host: '34.71.87.187',
-          port: 5432,
-          database: 'datagovernance',
-          username: 'postgres',
-          password: 'India@5555',
-        ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable),
-      );
-
-      connection.execute(
-        'INSERT INTO public.black_ox_user (name, password, email, number) '
-        'VALUES (\$1, \$2, \$3, \$4)',
-        parameters: [name, password, email, number],
-      );
-      await connection.close();
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<bool> checkEmailExists(String email) async {
-    try {
-      final connection = await Connection.open(
-        Endpoint(
-          host: '34.71.87.187',
-          port: 5432,
-          database: 'datagovernance',
-          username: 'postgres',
-          password: 'India@5555',
-        ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable),
-      );
-
-      final result = await connection.execute(
-        'SELECT COUNT(*) FROM public.black_ox_user WHERE email = \$1',
-        parameters: [email],
-      );
-
-      await connection.close();
-
-      // Ensure the result is properly cast to an integer
-      if (result.isNotEmpty && result.first.isNotEmpty) {
-        int count = result.first[0] as int;
-        return count > 0;
-      } else {
-        return false;
-      }
-    } catch (e) {
-      return false;
-    }
   }
 
   bool _validatePassword(String password) {

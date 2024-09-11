@@ -1,5 +1,8 @@
 import 'package:blackox/CropCalculator/bom_screen.dart';
 import 'package:blackox/Services/database_services.dart';
+import 'package:country_currency_pickers/country.dart';
+import 'package:country_currency_pickers/country_pickers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CropCalculator extends StatefulWidget {
@@ -18,6 +21,8 @@ class _CropCalculatorState extends State<CropCalculator> {
   String? _selectedDistrict;
   String? _selectedTaluka;
   double _sowingArea = 0;
+  Country? _selectedCountryCurrency;
+  String? _selectedUnitOfMeasurement;
   DatabaseService dbService = DatabaseService();
 
   final List<String> _selectedCrops = [];
@@ -29,6 +34,7 @@ class _CropCalculatorState extends State<CropCalculator> {
   List<String> states = [];
   List<String> districts = [];
   List<String> talukas = [];
+  List<String> unitsOfMeasurement = ['Acres', 'Hectares', 'Square meters'];
 
   @override
   void initState() {
@@ -438,12 +444,11 @@ class _CropCalculatorState extends State<CropCalculator> {
               ),
 
               const SizedBox(height: 16),
-
               // Sowing Area Input Field
               TextFormField(
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Sowing Area (sq.m)*',
+                  labelText: 'Sowing Area *',
                 ),
                 onChanged: (value) {
                   setState(() {
@@ -451,9 +456,43 @@ class _CropCalculatorState extends State<CropCalculator> {
                   });
                 },
               ),
-
               const SizedBox(height: 16),
 
+              // Unit of Measurement Dropdown
+              const Text('Unit of Measurement*',
+                  style: TextStyle(fontSize: 16)),
+              DropdownButton<String>(
+                value: _selectedUnitOfMeasurement,
+                hint: const Text('Select Unit of Measurement'),
+                isExpanded: true,
+                items: unitsOfMeasurement.map((String unit) {
+                  return DropdownMenuItem<String>(
+                    value: unit,
+                    child: Text(unit),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedUnitOfMeasurement = newValue;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              CountryPickerDropdown(
+                initialValue: 'IN',
+                itemBuilder: _buildDropdownItem,
+                onValuePicked: (Country? country) {
+                  setState(() {
+                    _selectedCountryCurrency = country;
+                  });
+                  if (kDebugMode) {
+                    print(
+                        "Selected country: ${country?.name}, Currency: ${country?.currencyCode}");
+                  }
+                },
+                itemFilter: (country) => country.currencyCode!.isNotEmpty,
+              ),
+              const SizedBox(height: 16),
               // Submit Button
               Center(
                 child: ElevatedButton(
@@ -465,6 +504,16 @@ class _CropCalculatorState extends State<CropCalculator> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildDropdownItem(Country country) {
+    return Row(
+      children: <Widget>[
+        CountryPickerUtils.getDefaultFlagImage(country),
+        const SizedBox(width: 8.0),
+        Text("${country.name} (${country.currencyCode})"),
+      ],
     );
   }
 }

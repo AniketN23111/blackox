@@ -1,4 +1,4 @@
-import 'package:blackox/Authentication%20Screen/login_screen.dart';
+import 'package:blackox/Authentication%20Screen/authentication_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -87,7 +87,7 @@ class _AccountPageState extends State<AccountPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(builder: (context) => const AuthenticationScreen()),
       (Route<dynamic> route) => false, // Remove all routes
     );
   }

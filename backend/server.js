@@ -3,6 +3,7 @@ const multer = require('multer');
 const XLSX = require('xlsx');
 const { Pool } = require('pg');
 const cors = require('cors'); // Import cors
+const bcrypt = require('bcrypt');
 
 const app = express();
 app.use(cors()); // Enable CORS for all origins
@@ -17,6 +18,72 @@ const pool = new Pool({
   database: 'datagovernance',
   user: 'postgres',
   password: 'India@5555',
+});
+
+// Register user with email check and encrypted password
+app.post('/black_ox_api/register', async (req, res) => {
+  const { name, password, email, number } = req.body;
+
+  try {
+    const client = await pool.connect();
+
+    // Check if the email already exists
+    const emailCheck = await client.query('SELECT COUNT(*) FROM public.black_ox_user WHERE email = $1', [email]);
+
+    if (emailCheck.rows[0].count > 0) {
+      // If the email exists, return an error
+      client.release();
+      return res.status(400).json({ success: false, message: 'Email already exists' });
+    }
+
+    // Hash the password before storing
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Insert the new user into the database
+    await client.query(
+      'INSERT INTO public.black_ox_user (name, password, email, number) VALUES ($1, $2, $3, $4)',
+      [name, hashedPassword, email, number]
+    );
+
+    client.release();
+    res.status(200).json({ success: true, message: 'User registered successfully' });
+  } catch (err) {
+    console.error('Error registering user:', err);
+    res.status(500).json({ success: false, message: 'Registration failed' });
+  }
+});
+
+// Login route
+app.post('/black_ox_api/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const client = await pool.connect();
+
+    // Fetch the user by email
+    const result = await client.query('SELECT password FROM public.black_ox_user WHERE email = $1', [email]);
+
+    client.release();
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    }
+
+    const hashedPassword = result.rows[0].password;
+
+    // Compare the hashed password with the provided password
+    const passwordMatch = await bcrypt.compare(password, hashedPassword);
+
+    if (passwordMatch) {
+      res.status(200).json({ success: true, message: 'Login successful' });
+    } else {
+      res.status(401).json({ success: false, message: 'Invalid email or password' });
+    }
+  } catch (err) {
+    console.error('Error logging in:', err);
+    res.status(500).json({ success: false, message: 'Login failed' });
+  }
 });
 
 //Upload Crop Bill of Material
@@ -316,28 +383,6 @@ app.get('/black_ox_api/categoryTypes', async (req, res) => {
   } catch (error) {
     console.error('Error fetching category types:', error);
     res.status(500).json({ error: 'Failed to fetch category types' });
-  }
-});
-
-// Login route
-app.post('/black_ox_api/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    // Query to check credentials
-    const result = await pool.query(
-      'SELECT * FROM public.black_ox_user WHERE email = $1 AND password = $2',
-      [email, password]
-    );
-
-    if (result.rows.length > 0) {
-      res.status(200).json({ success: true, message: 'Login successful' });
-    } else {
-      res.status(401).json({ success: false, message: 'Invalid credentials' });
-    }
-  } catch (err) {
-    console.error('Error executing query', err.stack);
-    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 

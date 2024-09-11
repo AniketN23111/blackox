@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:blackox/Authentication%20Screen/authentication_screen.dart';
 import 'package:blackox/Constants/screen_utility.dart';
 import 'package:flutter/material.dart';
 
 class AccountComplete extends StatefulWidget {
   final String username;
+
   const AccountComplete({super.key, required this.username});
 
   @override
@@ -17,7 +19,10 @@ class _AccountCompleteState extends State<AccountComplete> {
     super.initState();
     Timer(
       const Duration(seconds: 4),
-          () => Navigator.pushNamed(context, '/letStartedScreen'),
+      () => Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const AuthenticationScreen()),
+      ),
     );
   }
 
@@ -26,15 +31,33 @@ class _AccountCompleteState extends State<AccountComplete> {
     return Scaffold(
       body: Column(
         children: [
-           SizedBox(height: ScreenUtility.screenHeight * 0.1),
+          SizedBox(height: ScreenUtility.screenHeight * 0.1),
           Image.asset("assets/Images/BlackOxLogo.png"),
-           SizedBox(height:  ScreenUtility.screenHeight * 0.05,),
-          const Text("Confirm ! ",style: TextStyle(fontSize: 50,color: Colors.green,fontFamily: 'Roboto',fontWeight: FontWeight.bold),),
-          const Text("Congratulations",style: TextStyle(fontSize: 50,color: Colors.black,fontFamily: 'Roboto',fontWeight: FontWeight.bold)),
+          SizedBox(
+            height: ScreenUtility.screenHeight * 0.05,
+          ),
+          const Text(
+            "Confirm ! ",
+            style: TextStyle(
+                fontSize: 50,
+                color: Colors.green,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.bold),
+          ),
+          const Text("Congratulations",
+              style: TextStyle(
+                  fontSize: 50,
+                  color: Colors.black,
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.bold)),
           Text.rich(
             TextSpan(
               text: "Welcome ",
-              style: const TextStyle(fontSize: 30,color: Colors.black,fontFamily: 'Roboto',fontWeight: FontWeight.normal),
+              style: const TextStyle(
+                  fontSize: 30,
+                  color: Colors.black,
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.normal),
               children: <TextSpan>[
                 TextSpan(
                   text: widget.username,
@@ -46,11 +69,17 @@ class _AccountCompleteState extends State<AccountComplete> {
               ],
             ),
           ),
-           SizedBox(height: ScreenUtility.screenHeight * 0.05,),
-          Image.asset("assets/Images/account_complete.png",
+          SizedBox(
+            height: ScreenUtility.screenHeight * 0.05,
+          ),
+          Image.asset(
+            "assets/Images/account_complete.png",
             height: ScreenUtility.screenHeight * 0.15,
-          fit: BoxFit.fitHeight,),
-           SizedBox(height: ScreenUtility.screenHeight * 0.1,),
+            fit: BoxFit.fitHeight,
+          ),
+          SizedBox(
+            height: ScreenUtility.screenHeight * 0.1,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
