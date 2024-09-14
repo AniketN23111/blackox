@@ -22,7 +22,7 @@ const pool = new Pool({
 
 // Register user with email check and encrypted password
 app.post('/black_ox_api/register', async (req, res) => {
-  const { name, password, email, number } = req.body;
+  const { name, password, email, number,image_url } = req.body;
 
   try {
     const client = await pool.connect();
@@ -42,8 +42,8 @@ app.post('/black_ox_api/register', async (req, res) => {
 
     // Insert the new user into the database
     await client.query(
-      'INSERT INTO public.black_ox_user (name, password, email, number) VALUES ($1, $2, $3, $4)',
-      [name, hashedPassword, email, number]
+      'INSERT INTO public.black_ox_user (name, password, email, number,image_url) VALUES ($1, $2, $3, $4, $5)',
+      [name, hashedPassword, email, number,image_url]
     );
 
     client.release();
@@ -83,6 +83,27 @@ app.post('/black_ox_api/login', async (req, res) => {
   } catch (err) {
     console.error('Error logging in:', err);
     res.status(500).json({ success: false, message: 'Login failed' });
+  }
+});
+
+// Fetch user data route
+app.get('/black_ox_api/user-data', async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM public.black_ox_user WHERE email = $1',
+      [email]
+    );
+
+    if (result.rows.length > 0) {
+      res.status(200).json({ success: true, data: result.rows });
+    } else {
+      res.status(404).json({ success: false, message: 'User not found' });
+    }
+  } catch (err) {
+    console.error('Error executing query', err.stack);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
@@ -386,26 +407,7 @@ app.get('/black_ox_api/categoryTypes', async (req, res) => {
   }
 });
 
-// Fetch user data route
-app.get('/black_ox_api/user-data', async (req, res) => {
-  const { email } = req.query;
 
-  try {
-    const result = await pool.query(
-      'SELECT * FROM public.black_ox_user WHERE email = $1',
-      [email]
-    );
-
-    if (result.rows.length > 0) {
-      res.status(200).json({ success: true, data: result.rows });
-    } else {
-      res.status(404).json({ success: false, message: 'User not found' });
-    }
-  } catch (err) {
-    console.error('Error executing query', err.stack);
-    res.status(500).json({ success: false, message: 'Server error' });
-  }
-});
 
 app.get('/black_ox_api/bom/:bomcode/:bomid', async (req, res) => {
   const { bomcode, bomid } = req.params;

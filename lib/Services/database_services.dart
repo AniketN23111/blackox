@@ -19,8 +19,8 @@ class DatabaseService {
   );
   final String baseUrl = 'http://localhost:3000/black_ox_api';
 
-  Future<bool> registerUser(
-      String name, String password, String email, String number) async {
+  Future<bool> registerUser(String name, String password, String email,
+      String number, String imageUrl) async {
     final url = Uri.parse('$baseUrl/register');
 
     final response = await http.post(
@@ -31,29 +31,13 @@ class DatabaseService {
         'password': password,
         'email': email,
         'number': number,
+        'image_url': imageUrl,
       }),
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return data['success'] == true;
-    } else {
-      return false;
-    }
-  }
-
-  Future<bool> checkEmailExists(String email) async {
-    final url = Uri.parse('$baseUrl/checkEmail');
-
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email}),
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['exists'] == true;
     } else {
       return false;
     }

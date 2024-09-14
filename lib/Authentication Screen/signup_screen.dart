@@ -1,10 +1,13 @@
 import 'package:blackox/Constants/screen_utility.dart';
+import 'package:blackox/GoogleApi/cloudApi.dart';
 import 'package:blackox/Services/database_services.dart';
 import 'package:blackox/Splash Screen/account_complete.dart';
 import 'package:email_otp/email_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -28,6 +31,86 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isOtpSending = false; // Added state variable for OTP sending process
   bool isSigningUp = false;
   bool isEmailValid = false; // Added state variable for email validity
+
+  Uint8List? _uploadedImageBytes;
+  String? _downloadUrl;
+  final ImagePicker _picker = ImagePicker();
+  CloudApi? cloudApi;
+  bool _uploading = false;
+
+  Future<void> _pickAndUploadImage() async {
+    _requestPermissions();
+    setState(() {
+      _uploading = true; // Start uploading, show progress indicator
+    });
+
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No file picked')),
+      );
+      setState(() {
+        _uploading = false; // Cancel upload, hide progress indicator
+      });
+      return;
+    }
+
+    if (cloudApi == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cloud API not initialized')),
+      );
+      setState(() {
+        _uploading = false; // Cancel upload, hide progress indicator
+      });
+      return;
+    }
+
+    Uint8List imageBytes = await pickedFile.readAsBytes();
+    String fileName = pickedFile.name;
+
+    try {
+      // Upload the image to the bucket
+      //final response = await cloudApi!.save(fileName, imageBytes);
+      final downloadUrl = await cloudApi!.getDownloadUrl(fileName);
+
+      // Store the image bytes to display it
+      setState(() {
+        _uploadedImageBytes = imageBytes;
+        _downloadUrl = downloadUrl;
+        _uploading = false; // Upload finished, hide progress indicator
+      });
+    } catch (e) {
+      print("Error uploading image: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to upload image: $e')),
+      );
+      setState(() {
+        _uploading = false; // Error in upload, hide progress indicator
+      });
+    }
+  }
+
+  Future<void> _loadCloudApi() async {
+    String jsonCredentials = await rootBundle
+        .loadString('assets/GoogleJson/clean-emblem-394910-905637ad42b3.json');
+    setState(() {
+      cloudApi = CloudApi(jsonCredentials);
+    });
+  }
+
+  Future<void> _requestPermissions() async {
+    if (await Permission.photos.request().isGranted) {
+      print("Gallery access granted");
+    } else {
+      print("Gallery access denied");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCloudApi();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,6 +249,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 BorderRadius.all(Radius.circular(9.0)))),
                   ),
                 ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: ScreenUtility.screenHeight * 0.1,
+                  width: ScreenUtility.screenWidth * 0.8,
+                  child: _downloadUrl != null
+                      ? Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Image.network(_downloadUrl!),
+                        )
+                      : _uploading
+                          ? const CircularProgressIndicator()
+                          : Container(),
+                ),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _uploading ? null : _pickAndUploadImage,
+                    child: _uploading
+                        ? const CircularProgressIndicator() // Show progress indicator
+                        : const Text("Upload Profile Photo"),
+                  ),
+                ),
                 SizedBox(height: ScreenUtility.screenHeight * 0.05),
                 Center(
                   child: ElevatedButton(
@@ -174,15 +278,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         setState(() {
                           isSigningUp = true;
                         });
+
+                        // Handle the case where no profile photo is uploaded
+                        String? profilePhotoUrl = _downloadUrl ??
+                            'assets/Images/profile.png'; // Default profile photo URL
+
                         bool isRegistered = await dbService.registerUser(
                           nameController.text,
                           passwordController.text,
                           emailController.text,
                           numberController.text,
+                          profilePhotoUrl, // Use default or uploaded URL
                         );
+
                         setState(() {
                           isSigningUp = false;
                         });
+
                         if (isRegistered) {
                           Navigator.push(
                             // ignore: use_build_context_synchronously
@@ -196,8 +308,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text('Email Already Exist'),
-                                backgroundColor: Colors.redAccent),
+                              content: Text('Email Already Exist'),
+                              backgroundColor: Colors.redAccent,
+                            ),
                           );
                         }
                       }
