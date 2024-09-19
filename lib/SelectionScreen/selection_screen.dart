@@ -9,7 +9,6 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:postgres/postgres.dart';
 
 class SelectionScreen extends StatefulWidget {
   final Function(Locale) onLocaleChange;
@@ -50,7 +49,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
   final ImagePicker _picker = ImagePicker();
   CloudApi? cloudApi;
   bool _uploading = false;
-
+  DatabaseService dbService = DatabaseService();
 
   @override
   void initState() {
@@ -67,6 +66,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
   List<CategoryType> _categories = [];
   Map<String, Color> _categoryColors = {};
   Map<String, bool> _loadingState = {};
+
   Future<void> _fetchCategories() async {
     try {
       final categories = await databaseService.getCategoryType();
@@ -115,6 +115,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
       });
     }
   }
+
   Future<void> _pickAndUploadImage() async {
     _requestPermissions();
     setState(() {
@@ -147,7 +148,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
 
     try {
       // Upload the image to the bucket
-      final response = await cloudApi!.save(fileName, imageBytes);
       final downloadUrl = await cloudApi!.getDownloadUrl(fileName);
 
       // Store the image bytes to display it
@@ -166,9 +166,10 @@ class _SelectionScreenState extends State<SelectionScreen> {
       });
     }
   }
+
   Future<void> _loadCloudApi() async {
-    String jsonCredentials = await rootBundle.loadString(
-        'assets/GoogleJson/clean-emblem-394910-905637ad42b3.json');
+    String jsonCredentials = await rootBundle
+        .loadString('assets/GoogleJson/clean-emblem-394910-905637ad42b3.json');
     setState(() {
       cloudApi = CloudApi(jsonCredentials);
     });
@@ -190,31 +191,31 @@ class _SelectionScreenState extends State<SelectionScreen> {
     try {
       DateTime registerDate = DateTime.now();
 
-      await registerBusinessDetails(
-        perNameController.text,
-        perNumberController.text,
-        perEmailController.text,
-        businessNameController.text,
-        businessAddressController.text,
-        int.parse(businessPinCodeController.text),
-        businessCityController.text,
-        businessGSTController.text,
-        selectedCategoryType.toString(),
-        productNameController.text,
-        int.parse(rateController.text),
-        selectedRatePer.toString(),
-        discountRateController.text,
-        DateTime.parse(startDateController.text),
-        DateTime.parse(endDateController.text),
-        registerDate,
-        _downloadUrl!
-      );
+      await dbService.registerBusinessDetails(
+          perNameController.text,
+          perNumberController.text,
+          perEmailController.text,
+          businessNameController.text,
+          businessAddressController.text,
+          int.parse(businessPinCodeController.text),
+          businessCityController.text,
+          businessGSTController.text,
+          selectedCategoryType.toString(),
+          productNameController.text,
+          int.parse(rateController.text),
+          selectedRatePer.toString(),
+          discountRateController.text,
+          DateTime.parse(startDateController.text),
+          DateTime.parse(endDateController.text),
+          registerDate,
+          _downloadUrl!);
 
       setState(() {
         isStored = true;
       });
 
-      Navigator.pushNamed(context, '/authenticationScreen'); // Navigate to authentication screen
+      Navigator.pushNamed(context,
+          '/authenticationScreen'); // Navigate to authentication screen
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('An error occurred: $error')),
@@ -381,51 +382,52 @@ class _SelectionScreenState extends State<SelectionScreen> {
           content: isLoadingSubCategory
               ? const Center(child: CircularProgressIndicator())
               : Column(
-            children: [
-              const Text(
-                'Sub Category',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              ..._categories.map((category) {
-                return _buildSubCategoryButton(category.categoryName);
-              }).toList(),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  // Handle Add More action
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  minimumSize: Size(
-                    MediaQuery.of(context).size.width * 0.8,
-                    MediaQuery.of(context).size.height * 0.05,
-                  ), // Increase button size
+                  children: [
+                    const Text(
+                      'Sub Category',
+                      style:
+                          TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    ..._categories.map((category) {
+                      return _buildSubCategoryButton(category.categoryName);
+                    }).toList(),
+                    const SizedBox(height: 30),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Handle Add More action
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        minimumSize: Size(
+                          MediaQuery.of(context).size.width * 0.8,
+                          MediaQuery.of(context).size.height * 0.05,
+                        ), // Increase button size
+                      ),
+                      child: const Text(
+                        'Add More',
+                        style: TextStyle(color: Colors.white, fontSize: 24),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/authenticationScreen');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        minimumSize: Size(
+                          MediaQuery.of(context).size.width * 0.8,
+                          MediaQuery.of(context).size.height * 0.05,
+                        ), // Increase button size
+                      ),
+                      child: const Text(
+                        'Continue',
+                        style: TextStyle(color: Colors.white, fontSize: 24),
+                      ),
+                    ),
+                  ],
                 ),
-                child: const Text(
-                  'Add More',
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                ),
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/authenticationScreen');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  minimumSize: Size(
-                    MediaQuery.of(context).size.width * 0.8,
-                    MediaQuery.of(context).size.height * 0.05,
-                  ), // Increase button size
-                ),
-                child: const Text(
-                  'Continue',
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                ),
-              ),
-            ],
-          ),
           isActive: true,
           state: StepState.editing,
         ),
@@ -497,7 +499,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
             _loadingState[subCategory] = true;
           });
 
-          await Future.delayed(const Duration(seconds: 1)); // Simulate a delay for the loading state
+          await Future.delayed(const Duration(
+              seconds: 1)); // Simulate a delay for the loading state
 
           setState(() {
             if (isSelected) {
@@ -518,50 +521,51 @@ class _SelectionScreenState extends State<SelectionScreen> {
         child: isLoading
             ? const CircularProgressIndicator(color: Colors.white)
             : Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 40,
-              height: 20,
-              child: Stack(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Positioned(
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                        shape: BoxShape.circle,
-                        color: isSelected ? Colors.green : Colors.transparent,
-                      ),
+                  SizedBox(
+                    width: 40,
+                    height: 20,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          child: Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              shape: BoxShape.circle,
+                              color: isSelected
+                                  ? Colors.green
+                                  : Colors.transparent,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 5,
+                          left: 5,
+                          child: Container(
+                            width: 10,
+                            height: 10,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Positioned(
-                    top: 5,
-                    left: 5,
-                    child: Container(
-                      width: 10,
-                      height: 10,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black,
-                      ),
-                    ),
+                  SizedBox(width: MediaQuery.of(context).size.height * 0.01),
+                  Text(
+                    subCategory,
+                    style: const TextStyle(color: Colors.black, fontSize: 24),
                   ),
                 ],
               ),
-            ),
-            SizedBox(width: MediaQuery.of(context).size.height * 0.01),
-            Text(
-              subCategory,
-              style: const TextStyle(color: Colors.black, fontSize: 24),
-            ),
-          ],
-        ),
       ),
     );
   }
-
 
   Widget _buildPersonalDetailForm() {
     final formkey = GlobalKey<FormState>();
@@ -877,8 +881,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.business,
                   color: Colors.grey,
                 ),
-                contentPadding:
-                const EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 25.0, horizontal: 10.0),
                 border: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -899,7 +903,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   color: Colors.grey,
                 ),
                 contentPadding:
-                EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -926,7 +930,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   color: Colors.grey,
                 ),
                 contentPadding:
-                EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -956,8 +960,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   Icons.local_atm_outlined,
                   color: Colors.grey,
                 ),
-                contentPadding:
-                const EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 25.0, horizontal: 10.0),
                 border: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -982,7 +986,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   color: Colors.grey,
                 ),
                 contentPadding:
-                EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -1004,7 +1008,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   color: Colors.grey,
                 ),
                 contentPadding:
-                EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -1026,7 +1030,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   color: Colors.grey,
                 ),
                 contentPadding:
-                EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
+                    EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0),
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red),
                   borderRadius: BorderRadius.all(Radius.circular(9)),
@@ -1040,15 +1044,15 @@ class _SelectionScreenState extends State<SelectionScreen> {
             width: ScreenUtility.screenWidth * 0.8,
             child: _downloadUrl != null
                 ? Padding(
-              padding: const EdgeInsets.all(20),
-              child: Image.network(_downloadUrl!),
-            )
+                    padding: const EdgeInsets.all(20),
+                    child: Image.network(_downloadUrl!),
+                  )
                 : _uploading
-                ? const Padding(
-              padding: EdgeInsets.all(20),
-              child: CircularProgressIndicator(),
-            )
-                : Container(),
+                    ? const Padding(
+                        padding: EdgeInsets.all(20),
+                        child: CircularProgressIndicator(),
+                      )
+                    : Container(),
           ),
           ElevatedButton(
             onPressed: _uploading ? null : _pickAndUploadImage,
@@ -1066,76 +1070,15 @@ class _SelectionScreenState extends State<SelectionScreen> {
             ),
             child: isLoading
                 ? const CircularProgressIndicator(
-              color: Colors.white,
-            )
+                    color: Colors.white,
+                  )
                 : const Text(
-              'Continue',
-              style: TextStyle(color: Colors.white, fontSize: 24),
-            ),
+                    'Continue',
+                    style: TextStyle(color: Colors.white, fontSize: 24),
+                  ),
           ),
         ],
       ),
     );
-  }
-
-
-  Future<bool> registerBusinessDetails(
-      String uName,
-      String uNumber,
-      String uEmail,
-      String bName,
-      String bAddress,
-      int bPinCode,
-      String bCity,
-      String gstNO,
-      String categoryType,
-      String productName,
-      int rate,
-      String ratePer,
-      String discountRate,
-      DateTime startDate,
-      DateTime endDate,
-      DateTime registerDate,
-      String imageUrl) async {
-    try {
-      final connection = await Connection.open(
-        Endpoint(
-          host: '34.71.87.187',
-          port: 5432,
-          database: 'datagovernance',
-          username: 'postgres',
-          password: 'India@5555',
-        ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable),
-      );
-
-      connection.execute(
-        'INSERT INTO public.business_details (u_name,u_number,u_email,b_name,b_address,b_pincode,b_city,gstno,category_type,product_name,rate,rate_per,discount_rate,start_date,end_date,register_date,image_url) '
-        'VALUES (\$1, \$2, \$3, \$4,\$5, \$6, \$7, \$8,\$9, \$10, \$11, \$12,\$13, \$14, \$15, \$16, \$17)',
-        parameters: [
-          uName,
-          uNumber,
-          uEmail,
-          bName,
-          bAddress,
-          bPinCode,
-          bCity,
-          gstNO,
-          categoryType,
-          productName,
-          rate,
-          ratePer,
-          discountRate,
-          startDate,
-          endDate,
-          registerDate,
-          imageUrl
-        ],
-      );
-      isLoading =false;
-      return true;
-    } catch (e) {
-      return false;
-    }
   }
 }

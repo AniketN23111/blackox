@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:blackox/Model/GetUnit.dart';
 import 'package:blackox/Model/bom_item.dart';
 import 'package:blackox/Model/business_details.dart';
 import 'package:blackox/Model/category_type.dart';
@@ -125,6 +126,19 @@ class DatabaseService {
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       return data.map((item) => BOMItem.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load BOM items');
+    }
+  }
+
+  Future<List<GetUnit>> fetchBOMGetUnit(String bomCode, String bomId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/getUnit/$bomCode/$bomId'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((item) => GetUnit.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load BOM items');
     }
@@ -285,6 +299,66 @@ class DatabaseService {
       }
     } catch (error) {
       throw Exception('Error fetching talukas: $error');
+    }
+  }
+
+  Future<bool> registerBusinessDetails(
+    String uName,
+    String uNumber,
+    String uEmail,
+    String bName,
+    String bAddress,
+    int bPinCode,
+    String bCity,
+    String gstNO,
+    String categoryType,
+    String productName,
+    int rate,
+    String ratePer,
+    String discountRate,
+    DateTime startDate,
+    DateTime endDate,
+    DateTime registerDate,
+    String imageUrl,
+  ) async {
+    final url = Uri.parse('$baseUrl/registerBusiness');
+
+    final body = jsonEncode({
+      'uName': uName,
+      'uNumber': uNumber,
+      'uEmail': uEmail,
+      'bName': bName,
+      'bAddress': bAddress,
+      'bPinCode': bPinCode,
+      'bCity': bCity,
+      'gstNO': gstNO,
+      'categoryType': categoryType,
+      'productName': productName,
+      'rate': rate,
+      'ratePer': ratePer,
+      'discountRate': discountRate,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate.toIso8601String(),
+      'registerDate': registerDate.toIso8601String(),
+      'imageUrl': imageUrl,
+    });
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print('Failed to register business: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return false;
     }
   }
 }

@@ -34,7 +34,7 @@ class _CropCalculatorState extends State<CropCalculator> {
   List<String> states = [];
   List<String> districts = [];
   List<String> talukas = [];
-  List<String> unitsOfMeasurement = ['Acres', 'Hectares', 'Square meters'];
+  List<String> unitsOfMeasurement = ['Acre', 'Hectare', 'Square Meter'];
 
   @override
   void initState() {
@@ -205,7 +205,9 @@ class _CropCalculatorState extends State<CropCalculator> {
           MaterialPageRoute(
             builder: (context) => BOMScreen(
               bomData: bomDataList,
-              name: _selectedCrops.join(', '), // Join crop names for the header
+              name: _selectedCrops.join(', '),
+              sowingArea: _sowingArea,
+              unitOfMeasure: _selectedUnitOfMeasurement!,
             ),
           ),
         );
@@ -491,6 +493,12 @@ class _CropCalculatorState extends State<CropCalculator> {
                   }
                 },
                 itemFilter: (country) => country.currencyCode!.isNotEmpty,
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                height: 40,
+                width: 40,
+                child: Image.asset(''),
               ),
               const SizedBox(height: 16),
               // Submit Button

@@ -407,14 +407,26 @@ app.get('/black_ox_api/categoryTypes', async (req, res) => {
   }
 });
 
-
-
 app.get('/black_ox_api/bom/:bomcode/:bomid', async (req, res) => {
   const { bomcode, bomid } = req.params;
 
   try {
     const result = await pool.query(
       'SELECT * FROM agri_crop_bill_of_material_detail WHERE bomcode = $1 AND bomid = $2',
+      [bomcode, bomid]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
+app.get('/black_ox_api/getUnit/:bomcode/:bomid', async (req, res) => {
+  const { bomcode, bomid } = req.params;
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM agri_crop_bill_of_material WHERE bomcode = $1 AND bomid = $2',
       [bomcode, bomid]
     );
     res.json(result.rows);
@@ -559,6 +571,59 @@ app.get('/black_ox_api/talukas/:district', async (req, res) => {
   } catch (error) {
     console.error('Error fetching talukas:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/black_ox_api/registerBusiness', async (req, res) => {
+  const {
+    uName,
+    uNumber,
+    uEmail,
+    bName,
+    bAddress,
+    bPinCode,
+    bCity,
+    gstNO,
+    categoryType,
+    productName,
+    rate,
+    ratePer,
+    discountRate,
+    startDate,
+    endDate,
+    registerDate,
+    imageUrl
+  } = req.body;
+
+  try {
+    // Insert business details into the database
+    const result = await pool.query(
+      'INSERT INTO public.business_details (u_name, u_number, u_email, b_name, b_address, b_pincode, b_city, gstno, category_type, product_name, rate, rate_per, discount_rate, start_date, end_date, register_date, image_url) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)',
+      [
+        uName,
+        uNumber,
+        uEmail,
+        bName,
+        bAddress,
+        bPinCode,
+        bCity,
+        gstNO,
+        categoryType,
+        productName,
+        rate,
+        ratePer,
+        discountRate,
+        startDate,
+        endDate,
+        registerDate,
+        imageUrl
+      ]
+    );
+
+    res.status(200).json({ success: true, message: 'Business registered successfully!' });
+  } catch (error) {
+    console.error('Error inserting business details:', error);
+    res.status(500).json({ success: false, message: 'Failed to register business details' });
   }
 });
 

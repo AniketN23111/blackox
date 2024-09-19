@@ -216,58 +216,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  /*Future<bool> fetchUserCredentials(String email, String password) async {
-    try {
-      final connection = await Connection.open(
-        Endpoint(
-          host: '34.71.87.187',
-          port: 5432,
-          database: 'datagovernance',
-          username: 'postgres',
-          password: 'India@5555',
-        ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable),
-      );
-
-      final result = await connection.execute(
-        'SELECT * FROM public.black_ox_user WHERE email = \$1 AND password = \$2',
-        parameters: [email, password],
-      );
-
-      await connection.close();
-
-      return result.isNotEmpty;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<List<List<dynamic>>> fetchUserData(String email) async {
-    try {
-      final connection = await Connection.open(
-        Endpoint(
-          host: '34.71.87.187',
-          port: 5432,
-          database: 'datagovernance',
-          username: 'postgres',
-          password: 'India@5555',
-        ),
-        settings: const ConnectionSettings(sslMode: SslMode.disable),
-      );
-
-      final result = await connection.execute(
-        'SELECT * FROM public.black_ox_user WHERE email = \$1',
-        parameters: [email],
-      );
-
-      await connection.close();
-
-      return result;
-    } catch (e) {
-      return [];
-    }
-  }*/
-
   bool _validatePassword(String password) {
     // Regular expression to check if password contains at least one letter, one number, and one special character
     final RegExp regex =
